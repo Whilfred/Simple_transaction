@@ -4,31 +4,74 @@ import { useState } from 'react';
 import Link from 'next/link';
 import ChoixCrypto from '@/components/ChoixCrypto';
 import ChampTelephone from '@/components/ChampTelephone';
-import { ADRESSES_DEPOT, telVide, nomReseau } from '@/lib/config';
-import { ajouterCommande, nouvelId, lire } from '@/lib/storage';
+import { telVide, nomReseau } from '@/lib/config';
+import { ajouterCommande, lire } from '@/lib/storage';
 
 export default function Vendre() {
   const [choix, setChoix] = useState({ crypto: 'USDT', reseau: 'TRC20' });
   const [depot, setDepot] = useState(telVide());
   const [commande, setCommande] = useState(null);
   const [copie, setCopie] = useState(false);
+  const [envoi, setEnvoi] = useState(false);
+  const [erreur, setErreur] = useState('');
 
-  function valider(e) {
+  async function valider(e) {
     e.preventDefault();
-    const c = {
-      id: nouvelId(),
-      type: 'vente',
-      date: new Date().toISOString(),
-      statut: 'En attente de dépôt',
-      ...choix,
-      numeroDepot: `${depot.indicatif} ${depot.numero.trim()}`,
-      operateurDepot: depot.operateur,
-      telephone: `${depot.indicatif} ${depot.numero.trim()}`,
-      adresseDepot: ADRESSES_DEPOT[`${choix.crypto}:${choix.reseau}`] || '',
-      prenom: lire('prenom', ''),
-    };
-    ajouterCommande(c);
-    setCommande(c);
+    setErreur('');
+
+    // Validation rapide du numéro
+    const numero = (depot.numero || '').replace(/\s+/g, '');
+    if (!numero) {
+      setErreur('Veuillez saisir votre numéro de dépôt.');
+      return;
+    }
+    if (!/^\d{6,15}$/.test(numero)) {
+      setErreur('Votre numéro semble invalide. Vérifiez les chiffres saisis.');
+      return;
+    }
+
+    setEnvoi(true);
+    try {
+      const reponse = await fetch('/api/commandes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'vente',
+          ...choix,
+          indicatif: depot.indicatif,
+          numero,
+          operateur: depot.operateur,
+          prenom: lire('prenom', '') || 'Client',
+        }),
+      });
+
+      const data = await reponse.json().catch(() => ({}));
+
+      if (!reponse.ok) {
+        setErreur(data.erreur || 'Une erreur est survenue. Réessayez.');
+        return;
+      }
+
+      ajouterCommande({
+        id: data.reference,
+        type: 'vente',
+        date: new Date().toISOString(),
+        statut: data.statut,
+        ...choix,
+      });
+
+      setCommande({
+        id: data.reference,
+        ...choix,
+        adresseDepot: data.adresseDepot,
+        numeroDepot: `${depot.indicatif} ${numero}`,
+        operateurDepot: depot.operateur,
+      });
+    } catch {
+      setErreur('Connexion impossible. Vérifiez votre internet et réessayez.');
+    } finally {
+      setEnvoi(false);
+    }
   }
 
   async function copier() {
@@ -44,16 +87,20 @@ export default function Vendre() {
       <section className="page etroite">
         <h1>Envoyez vos {commande.crypto}</h1>
         <p className="intro">
-          Envoyez uniquement des {commande.crypto} sur le réseau <strong>{nomReseau(commande.crypto, commande.reseau)}</strong> à cette adresse.
+          Envoyez uniquement des {commande.crypto} sur le réseau{' '}
+          <strong>{nomReseau(commande.crypto, commande.reseau)}</strong> à cette adresse.
         </p>
 
         <div className="adresse-depot">
           <code>{commande.adresseDepot}</code>
-          <button type="button" className="bouton" onClick={copier}>{copie ? 'Copié' : 'Copier'}</button>
+          <button type="button" className="bouton" onClick={copier}>
+            {copie ? 'Copié' : 'Copier'}
+          </button>
         </div>
 
         <p className="note">
-          Vos FCFA seront envoyés au {commande.numeroDepot} ({commande.operateurDepot}). Référence <strong>{commande.id}</strong>.
+          Vos FCFA seront envoyés au {commande.numeroDepot} ({commande.operateurDepot}).
+          Référence <strong>{commande.id}</strong>.
         </p>
 
         <div className="actions">
@@ -78,7 +125,15 @@ export default function Vendre() {
           avecOperateur
         />
 
-        <button className="bouton plein" type="submit">Obtenir l'adresse de dépôt</button>
+        {erreur && (
+          <p role="alert" style={{ color: '#b42318', margin: 0 }}>
+            {erreur}
+          </p>
+        )}
+
+        <button className="bouton plein" type="submit" disabled={envoi}>
+          {envoi ? 'Envoi…' : "Obtenir l'adresse de dépôt"}
+        </button>
       </form>
     </section>
   );

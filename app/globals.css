@@ -29,7 +29,7 @@ p { margin: 0 0 1rem; }
 
 .conteneur { width: min(100% - 2rem, 760px); margin-inline: auto; }
 
-/* En-tête */
+/* ============ En-tête ============ */
 .entete { border-bottom: 1px solid var(--bord); background: var(--carte); }
 .entete-ligne { display: flex; align-items: center; justify-content: space-between; min-height: 60px; gap: 1rem; }
 .logo { font-weight: 800; font-size: 1.25rem; letter-spacing: -0.03em; color: var(--encre); text-decoration: none; }
@@ -38,14 +38,14 @@ p { margin: 0 0 1rem; }
 .nav a.actif { color: var(--encre); border-color: var(--accent); }
 .salut { background: var(--accent-clair); color: var(--accent-fonce); padding: 0.2rem 0.7rem; border-radius: 999px; font-weight: 600; font-size: 0.85rem; }
 
-/* Pages */
+/* ============ Pages ============ */
 .page { padding: 2.5rem 0 4rem; }
 .etroite { max-width: 460px; margin-inline: auto; }
 .intro { color: var(--doux); font-size: 1.05rem; margin-bottom: 1.8rem; }
 .note { color: var(--doux); }
 .texte p { color: #2c3a35; }
 
-/* Accueil : deux grands choix */
+/* ============ Accueil ============ */
 .choix { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .carte-choix {
   display: flex; flex-direction: column; justify-content: space-between; gap: 2.5rem;
@@ -59,7 +59,7 @@ p { margin: 0 0 1rem; }
 .carte-choix.vendre { background: var(--carte); color: var(--encre); }
 .carte-choix.vendre:hover { background: var(--accent-clair); }
 
-/* Formulaires */
+/* ============ Formulaires ============ */
 .formulaire { display: flex; flex-direction: column; gap: 1.2rem; }
 .champ { display: flex; flex-direction: column; gap: 0.4rem; }
 .champ label { font-weight: 600; font-size: 0.95rem; }
@@ -79,7 +79,7 @@ input:focus, select:focus { border-color: var(--accent); outline: none; box-shad
 }
 .pastille.choisie { background: var(--accent-clair); border-color: var(--accent); color: var(--accent-fonce); font-weight: 700; }
 
-/* Boutons */
+/* ============ Boutons ============ */
 .bouton {
   display: inline-flex; align-items: center; justify-content: center;
   font: inherit; font-weight: 600; cursor: pointer; text-decoration: none;
@@ -90,14 +90,14 @@ input:focus, select:focus { border-color: var(--accent); outline: none; box-shad
 .bouton.plein:hover { background: var(--accent-fonce); border-color: var(--accent-fonce); }
 .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.5rem; }
 
-/* Adresse de dépôt */
+/* ============ Adresse de dépôt ============ */
 .adresse-depot {
   display: flex; align-items: center; gap: 0.75rem; justify-content: space-between;
   padding: 1rem; background: var(--carte); border: 1.5px solid var(--accent); border-radius: var(--rayon); margin-bottom: 1rem;
 }
 .adresse-depot code { word-break: break-all; font-size: 0.95rem; }
 
-/* Dashboard */
+/* ============ Dashboard ============ */
 .liste { list-style: none; padding: 0; margin: 1.5rem 0 0; display: flex; flex-direction: column; gap: 0.6rem; }
 .ligne { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem 1.1rem; background: var(--carte); border: 1px solid var(--bord); border-radius: var(--rayon); }
 .ligne small { display: block; color: var(--doux); }
@@ -105,21 +105,13 @@ input:focus, select:focus { border-color: var(--accent); outline: none; box-shad
 .vide { margin-top: 1.5rem; padding: 2rem; background: var(--carte); border: 1px dashed var(--bord); border-radius: var(--rayon); }
 .vide p { color: var(--doux); }
 
-/* Popup */
+/* ============ Popup ============ */
 .voile { position: fixed; inset: 0; background: rgba(14, 26, 22, 0.55); display: grid; place-items: center; padding: 1rem; z-index: 10; }
 .popup { background: var(--carte); border-radius: 16px; padding: 1.6rem; max-width: 420px; width: 100%; }
 .popup h2 { margin-top: 0; font-size: 1.4rem; }
 .popup .bouton { width: 100%; }
 
-@media (max-width: 520px) {
-  .choix { grid-template-columns: 1fr; }
-  .carte-choix { min-height: 130px; gap: 1rem; }
-  .nav { gap: 0.8rem; }
-}
-
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
-
-/* Sélecteur avec images */
+/* ============ Sélecteur avec images ============ */
 .selecteur { position: relative; }
 .selecteur-bouton {
   display: flex; align-items: center; gap: 0.6rem; width: 100%; text-align: left;
@@ -142,3 +134,75 @@ input:focus, select:focus { border-color: var(--accent); outline: none; box-shad
 .selecteur-option { display: flex; align-items: center; gap: 0.6rem; padding: 0.55rem 0.6rem; border-radius: 8px; cursor: pointer; }
 .selecteur-option.actif { background: var(--accent-clair); }
 .selecteur-option.choisi { font-weight: 700; color: var(--accent-fonce); }
+
+/* ============ Erreurs de champ ============ */
+.champ input[aria-invalid="true"] { border-color: #b42318; background: #fffbfa; }
+.champ small[role="alert"] { color: #b42318; font-weight: 500; }
+
+/* ============ Barre de navigation en bas ============ */
+.nav-bas {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: var(--carte);
+  border-top: 1px solid var(--bord);
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.nav-bas-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.6rem 0.5rem;
+  text-decoration: none;
+  color: var(--doux);
+  font-weight: 500;
+  border-top: 3px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.nav-bas-item.actif {
+  color: var(--accent);
+  border-top-color: var(--accent);
+  font-weight: 700;
+}
+
+.nav-bas-icone { font-size: 1.5rem; line-height: 1; }
+.nav-bas-texte { font-size: 0.75rem; letter-spacing: -0.01em; }
+
+.avec-nav-bas { padding-bottom: 90px; }
+
+/* Le prénom compact (visible seulement en mobile) */
+.salut-mobile { display: none; }
+
+/* ============ Media queries ============ */
+
+/* Mobile : on cache la nav du haut, on affiche la nav du bas */
+@media (max-width: 640px) {
+  .nav-haut { display: none; }
+  .salut-mobile { display: inline-block; }
+  .nav-bas { display: flex; }
+}
+
+/* Desktop : rien de spécial (nav du haut normale, nav basse cachée) */
+@media (min-width: 641px) {
+  .avec-nav-bas { padding-bottom: 0; }
+}
+
+/* Petits écrans : ajustements supplémentaires */
+@media (max-width: 520px) {
+  .choix { grid-template-columns: 1fr; }
+  .carte-choix { min-height: 130px; gap: 1rem; }
+  .nav { gap: 0.8rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
