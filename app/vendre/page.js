@@ -10,7 +10,6 @@ import { ajouterCommande, nouvelId, lire } from '@/lib/storage';
 export default function Vendre() {
   const [choix, setChoix] = useState({ crypto: 'USDT', reseau: 'TRC20' });
   const [depot, setDepot] = useState(telVide());
-  const [tel, setTel] = useState(telVide());
   const [commande, setCommande] = useState(null);
   const [copie, setCopie] = useState(false);
 
@@ -24,7 +23,7 @@ export default function Vendre() {
       ...choix,
       numeroDepot: `${depot.indicatif} ${depot.numero.trim()}`,
       operateurDepot: depot.operateur,
-      telephone: `${tel.indicatif} ${tel.numero.trim()}`,
+      telephone: `${depot.indicatif} ${depot.numero.trim()}`,
       adresseDepot: ADRESSES_DEPOT[`${choix.crypto}:${choix.reseau}`] || '',
       prenom: lire('prenom', ''),
     };
@@ -78,8 +77,6 @@ export default function Vendre() {
           onChange={setDepot}
           avecOperateur
         />
-
-        <ChampTelephone label="Votre numéro de téléphone" valeur={tel} onChange={setTel} />
 
         <button className="bouton plein" type="submit">Obtenir l'adresse de dépôt</button>
       </form>
