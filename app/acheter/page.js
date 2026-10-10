@@ -7,35 +7,64 @@ import ChampTelephone from '@/components/ChampTelephone';
 import { tauxPour, telVide, nomReseau } from '@/lib/config';
 import { adresseValide, aideAdresse } from '@/lib/adresses';
 import { ajouterCommande, lire } from '@/lib/storage';
-import { erreurMontant, erreurAdresse, erreurTelephone, messageServeur } from '@/lib/erreurs';
+import {
+  erreurMontant,
+  erreurAdresse,
+  erreurTelephone,
+  messageServeur,
+} from '@/lib/erreurs';
 
 export default function Acheter() {
-  const [choix, setChoix] = useState({ crypto: 'USDT', reseau: 'TRC20' });
+  const [choix, setChoix] = useState({
+    crypto: 'USDT',
+    reseau: 'TRC20',
+  });
   const [montant, setMontant] = useState('');
   const [adresse, setAdresse] = useState('');
   const [tel, setTel] = useState(telVide());
   const [envoye, setEnvoye] = useState(null);
   const [envoi, setEnvoi] = useState(false);
 
-  // Erreurs par champ
-  const [err, setErr] = useState({ montant: '', adresse: '', telephone: '', global: '' });
+  const [err, setErr] = useState({
+    montant: '',
+    adresse: '',
+    telephone: '',
+    global: '',
+  });
 
   const fcfa = Number(montant) || 0;
-  const estimation = fcfa > 0 ? (fcfa / tauxPour(fcfa)).toFixed(2) : null;
+  const estimation =
+    fcfa > 0 ? (fcfa / tauxPour(fcfa)).toFixed(2) : null;
   const reseauNom = nomReseau(choix.crypto, choix.reseau);
 
   function verifierChamp(champ) {
     let message = '';
+
     if (champ === 'montant') message = erreurMontant(montant);
-    if (champ === 'adresse') message = erreurAdresse(choix.reseau, adresse, adresseValide, aideAdresse);
-    if (champ === 'telephone') message = erreurTelephone(tel.numero);
+    if (champ === 'adresse') {
+      message = erreurAdresse(
+        choix.reseau,
+        adresse,
+        adresseValide,
+        aideAdresse
+      );
+    }
+    if (champ === 'telephone') {
+      message = erreurTelephone(tel.numero);
+    }
+
     setErr((e) => ({ ...e, [champ]: message || '' }));
     return !message;
   }
 
   async function valider(e) {
     e.preventDefault();
-    setErr({ montant: '', adresse: '', telephone: '', global: '' });
+    setErr({
+      montant: '',
+      adresse: '',
+      telephone: '',
+      global: '',
+    });
 
     const okMontant = verifierChamp('montant');
     const okAdresse = verifierChamp('adresse');
@@ -44,6 +73,7 @@ export default function Acheter() {
     if (!okMontant || !okAdresse || !okTel) return;
 
     setEnvoi(true);
+
     try {
       const reponse = await fetch('/api/commandes', {
         method: 'POST',
@@ -63,7 +93,10 @@ export default function Acheter() {
       const data = await reponse.json().catch(() => ({}));
 
       if (!reponse.ok) {
-        setErr((x) => ({ ...x, global: messageServeur(data.erreur) }));
+        setErr((x) => ({
+          ...x,
+          global: messageServeur(data.erreur),
+        }));
         return;
       }
 
@@ -82,100 +115,306 @@ export default function Acheter() {
         operateur: tel.operateur,
       });
     } catch (err) {
-      setErr((x) => ({ ...x, global: messageServeur(err.message) }));
+      setErr((x) => ({
+        ...x,
+        global: messageServeur(err.message),
+      }));
     } finally {
       setEnvoi(false);
     }
   }
 
+  // Confirmation
   if (envoye) {
     return (
-      <section className="page etroite">
-        <h1>Demande envoyée</h1>
-        <p className="intro">
-          Référence <strong>{envoye.id}</strong>. Nous vous contactons au {envoye.telephone} pour le paiement par {envoye.operateur}.
-        </p>
-        <div className="actions">
-          <Link href="/dashboard" className="bouton plein">Voir mes opérations</Link>
-          <Link href="/accueil" className="bouton">Retour à l'accueil</Link>
+      <section className="page achat-page">
+        <div className="confirmation-achat">
+          <div className="confirmation-icone">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="m5 12 4 4L19 6" />
+            </svg>
+          </div>
+
+          <span className="achat-surtitre">EXCRYPT · ACHAT</span>
+          <h1>Demande envoyée !</h1>
+
+          <p className="confirmation-description">
+            Votre demande a bien été transmise. Notre équipe vous
+            contactera pour la suite du paiement.
+          </p>
+
+          <div className="reference-achat">
+            <span>Référence de votre opération</span>
+            <strong>{envoye.id}</strong>
+          </div>
+
+          <div className="confirmation-detail">
+            <span>Numéro de contact</span>
+            <strong>{envoye.telephone}</strong>
+          </div>
+
+          <div className="confirmation-detail">
+            <span>Opérateur Mobile Money</span>
+            <strong>{envoye.operateur}</strong>
+          </div>
+
+          <div className="confirmation-note">
+            <span aria-hidden="true">ⓘ</span>
+            <p>
+              Attendez les instructions de paiement et vérifiez toujours
+              les informations avant d'envoyer de l'argent.
+            </p>
+          </div>
+
+          <div className="confirmation-actions">
+            <Link href="/dashboard" className="bouton plein">
+              Voir mes opérations
+            </Link>
+            <Link href="/accueil" className="bouton">
+              Retour à l'accueil
+            </Link>
+          </div>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="page etroite">
-      <h1>Acheter</h1>
-      <form onSubmit={valider} className="formulaire" noValidate>
-        <ChoixCrypto valeur={choix} onChange={setChoix} />
+    <section className="page achat-page">
+      {/* En-tête */}
+      <header className="achat-entete">
+        <Link href="/accueil" className="achat-retour">
+          <span aria-hidden="true">←</span> Accueil
+        </Link>
 
-        <div className="champ">
-          <label htmlFor="montant">Montant à payer (FCFA)</label>
-          <input
-            id="montant"
-            type="number"
-            inputMode="numeric"
-            min="1000"
-            max="1000000"
-            placeholder="50000"
-            value={montant}
-            onChange={(e) => {
-              setMontant(e.target.value);
-              if (err.montant) setErr((x) => ({ ...x, montant: '' }));
-            }}
-            onBlur={() => montant && verifierChamp('montant')}
-            aria-invalid={!!err.montant}
-            style={err.montant ? { borderColor: '#b42318' } : undefined}
-          />
-          {err.montant ? (
-            <small role="alert" style={{ color: '#b42318' }}>{err.montant}</small>
-          ) : (
-            estimation && <small>Environ {estimation} {choix.crypto} reçus.</small>
-          )}
+        <div className="achat-surtitre">
+          <span className="achat-point" />
+          ACHAT DE CRYPTOMONNAIES
         </div>
 
-        <div className="champ">
-          <label htmlFor="adresse">Adresse de réception {choix.crypto} ({reseauNom})</label>
-          <input
-            id="adresse"
-            value={adresse}
-            onChange={(e) => {
-              setAdresse(e.target.value);
-              if (err.adresse) setErr((x) => ({ ...x, adresse: '' }));
-            }}
-            onBlur={() => adresse && verifierChamp('adresse')}
-            autoComplete="off"
-            spellCheck={false}
-            aria-invalid={!!err.adresse}
-            style={err.adresse ? { borderColor: '#b42318' } : undefined}
-          />
-          {err.adresse && <small role="alert" style={{ color: '#b42318' }}>{err.adresse}</small>}
+        <h1>Acheter des cryptomonnaies</h1>
+
+        <p className="achat-description">
+          Payez en FCFA avec votre opérateur Mobile Money et recevez
+          vos cryptomonnaies à l'adresse indiquée.
+        </p>
+
+        <div className="achat-etapes">
+          <div className="achat-etape active">
+            <span>1</span>
+            <strong>Configuration</strong>
+          </div>
+          <div className="achat-etape-ligne" />
+          <div className="achat-etape">
+            <span>2</span>
+            <strong>Confirmation</strong>
+          </div>
+        </div>
+      </header>
+
+      <form onSubmit={valider} className="formulaire achat-formulaire" noValidate>
+        {/* Crypto et réseau */}
+        <div className="achat-bloc">
+          <div className="achat-bloc-titre">
+            <span className="achat-numero">01</span>
+            <div>
+              <h2>Votre cryptomonnaie</h2>
+              <p>Choisissez la monnaie et le réseau de réception.</p>
+            </div>
+          </div>
+
+          <ChoixCrypto valeur={choix} onChange={setChoix} />
         </div>
 
-        <div>
-          <ChampTelephone label="Votre numéro de téléphone" valeur={tel} onChange={(v) => {
-            setTel(v);
-            if (err.telephone) setErr((x) => ({ ...x, telephone: '' }));
-          }} avecOperateur />
-          {err.telephone && <small role="alert" style={{ color: '#b42318' }}>{err.telephone}</small>}
+        <div className="achat-separateur" />
+
+        {/* Montant */}
+        <div className="achat-bloc">
+          <div className="achat-bloc-titre">
+            <span className="achat-numero">02</span>
+            <div>
+              <h2>Montant de l'achat</h2>
+              <p>Indiquez combien vous souhaitez payer en FCFA.</p>
+            </div>
+          </div>
+
+          <div className="champ achat-champ">
+            <label htmlFor="montant">Montant à payer</label>
+
+            <div className={`achat-montant-input ${err.montant ? 'invalide' : ''}`}>
+              <input
+                id="montant"
+                type="number"
+                inputMode="numeric"
+                min="1000"
+                max="1000000"
+                placeholder="50 000"
+                value={montant}
+                onChange={(e) => {
+                  setMontant(e.target.value);
+                  if (err.montant) {
+                    setErr((x) => ({ ...x, montant: '' }));
+                  }
+                }}
+                onBlur={() => montant && verifierChamp('montant')}
+                aria-invalid={!!err.montant}
+              />
+              <span className="achat-devise">FCFA</span>
+            </div>
+
+            {err.montant ? (
+              <small role="alert" className="achat-erreur">
+                {err.montant}
+              </small>
+            ) : (
+              <small className="achat-aide">
+                Montant autorisé selon les limites de la plateforme.
+              </small>
+            )}
+          </div>
+
+          <div className="achat-estimation">
+            <div>
+              <span className="estimation-label">Vous recevrez environ</span>
+              <div className="estimation-valeur">
+                {estimation || '0.00'}
+                <span>{choix.crypto}</span>
+              </div>
+            </div>
+
+            <div className="estimation-icone" aria-hidden="true">
+              ↗
+            </div>
+          </div>
+
+          <p className="achat-note-taux">
+            Estimation indicative selon le taux applicable à votre montant.
+          </p>
         </div>
 
+        <div className="achat-separateur" />
+
+        {/* Adresse */}
+        <div className="achat-bloc">
+          <div className="achat-bloc-titre">
+            <span className="achat-numero">03</span>
+            <div>
+              <h2>Adresse de réception</h2>
+              <p>Indiquez l'adresse du portefeuille qui recevra vos fonds.</p>
+            </div>
+          </div>
+
+          <div className="champ achat-champ">
+            <label htmlFor="adresse">
+              Adresse {choix.crypto} ({reseauNom})
+            </label>
+
+            <input
+              id="adresse"
+              value={adresse}
+              onChange={(e) => {
+                setAdresse(e.target.value);
+                if (err.adresse) {
+                  setErr((x) => ({ ...x, adresse: '' }));
+                }
+              }}
+              onBlur={() => adresse && verifierChamp('adresse')}
+              autoComplete="off"
+              spellCheck={false}
+              placeholder="Collez votre adresse de portefeuille"
+              aria-invalid={!!err.adresse}
+            />
+
+            {err.adresse ? (
+              <small role="alert" className="achat-erreur">
+                {err.adresse}
+              </small>
+            ) : (
+              <small className="achat-aide">
+                Vérifiez que l'adresse correspond au réseau sélectionné.
+              </small>
+            )}
+          </div>
+
+          <div className="achat-avertissement">
+            <span aria-hidden="true">!</span>
+            <p>
+              Une adresse ou un réseau incorrect peut entraîner la perte
+              définitive des fonds. Vérifiez attentivement avant de continuer.
+            </p>
+          </div>
+        </div>
+
+        <div className="achat-separateur" />
+
+        {/* Téléphone */}
+        <div className="achat-bloc">
+          <div className="achat-bloc-titre">
+            <span className="achat-numero">04</span>
+          </div>
+
+          <div className="achat-telephone">
+            <ChampTelephone
+              label="Votre numéro de téléphone"
+              valeur={tel}
+              onChange={(v) => {
+                setTel(v);
+                if (err.telephone) {
+                  setErr((x) => ({ ...x, telephone: '' }));
+                }
+              }}
+              avecOperateur
+            />
+
+            {err.telephone && (
+              <small role="alert" className="achat-erreur">
+                {err.telephone}
+              </small>
+            )}
+          </div>
+        </div>
+
+        {/* Erreur générale */}
         {err.global && (
-          <p role="alert" style={{
-            color: '#b42318',
-            background: '#fee4e2',
-            padding: '0.8rem 1rem',
-            borderRadius: '8px',
-            margin: 0,
-            border: '1px solid #fda29b',
-          }}>
+          <p role="alert" className="achat-erreur-global">
+            <span aria-hidden="true">!</span>
             {err.global}
           </p>
         )}
 
-        <button className="bouton plein" type="submit" disabled={envoi}>
-          {envoi ? 'Envoi…' : 'Acheter'}
-        </button>
+        {/* Bouton */}
+        <div className="achat-pied-formulaire">
+          <div className="achat-securite">
+            <span aria-hidden="true">♧</span>
+            <span>Vérifiez les informations avant de confirmer.</span>
+          </div>
+
+          <button
+            className="bouton plein achat-submit"
+            type="submit"
+            disabled={envoi}
+          >
+            {envoi ? (
+              <>
+                <span className="achat-spinner" />
+                Envoi en cours…
+              </>
+            ) : (
+              <>
+                Continuer ma demande
+                <span aria-hidden="true">→</span>
+              </>
+            )}
+          </button>
+        </div>
       </form>
     </section>
   );

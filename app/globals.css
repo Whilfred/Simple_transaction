@@ -206,3 +206,1688 @@ input:focus, select:focus { border-color: var(--accent); outline: none; box-shad
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+
+```css
+/* =========================================
+   EXCRYPT — ACCUEIL PREMIUM
+   ========================================= */
+
+.accueil {
+  max-width: 940px;
+  margin-inline: auto;
+  padding-top: 2.8rem;
+}
+
+.accueil-hero {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 220px;
+  padding: 2.2rem 2.4rem;
+  margin-bottom: 2.8rem;
+  overflow: hidden;
+  isolation: isolate;
+  color: #fff;
+  background: linear-gradient(120deg, #103d30 0%, #14785c 58%, #20a078 100%);
+  border-radius: 24px;
+  box-shadow: 0 16px 40px rgba(20, 120, 92, 0.14);
+}
+
+.hero-contenu {
+  position: relative;
+  z-index: 2;
+  max-width: 540px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.4rem 0.7rem;
+  margin-bottom: 1.2rem;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.1);
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+
+.indicateur-en-ligne {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: #8af0be;
+  box-shadow: 0 0 10px rgba(138,240,190,0.7);
+}
+
+.accueil-hero h1 {
+  margin: 0 0 0.8rem;
+  color: #fff;
+  font-size: clamp(1.8rem, 4vw, 2.65rem);
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+}
+
+.accueil-hero .intro {
+  max-width: 430px;
+  margin: 0;
+  color: rgba(255,255,255,0.78);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.hero-decoration {
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 40%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-cercle {
+  position: absolute;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50%;
+}
+
+.hero-cercle-1 {
+  width: 260px;
+  height: 260px;
+  right: -60px;
+  top: -80px;
+  background: rgba(255,255,255,0.035);
+}
+
+.hero-cercle-2 {
+  width: 190px;
+  height: 190px;
+  right: -25px;
+  bottom: -115px;
+  background: rgba(255,255,255,0.06);
+}
+
+.hero-crypto {
+  position: absolute;
+  top: 50%;
+  right: 48px;
+  display: grid;
+  place-items: center;
+  width: 94px;
+  height: 94px;
+  transform: translateY(-50%) rotate(-8deg);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 28px;
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,0.24),
+    rgba(255,255,255,0.06)
+  );
+  box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+  color: #fff;
+  font-size: 3.5rem;
+  font-weight: 800;
+  backdrop-filter: blur(8px);
+}
+
+.accueil-section-titre {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.accueil-section-titre h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+
+.accueil-section-titre p {
+  margin: 0;
+  color: var(--doux);
+  font-size: 0.9rem;
+}
+
+.securite-badge {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #dcece5;
+  border-radius: 999px;
+  background: #edf7f1;
+  color: #176749;
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.accueil .choix {
+  gap: 1.2rem;
+}
+
+.accueil .carte-choix {
+  min-height: 280px;
+  padding: 1.6rem;
+  gap: 2rem;
+  border: 1px solid var(--bord);
+  border-radius: 20px;
+  background: #fff;
+  color: var(--encre);
+  box-shadow: 0 5px 18px rgba(14,26,22,0.025);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.accueil .carte-choix:hover {
+  transform: translateY(-4px);
+  border-color: #a6d5c2;
+  box-shadow: 0 16px 36px rgba(14,26,22,0.075);
+}
+
+.carte-haut {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.icone-operation {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 17px;
+}
+
+.icone-operation svg {
+  width: 28px;
+  height: 28px;
+}
+
+.icone-acheter {
+  color: #fff;
+  background: var(--accent);
+}
+
+.icone-vendre {
+  color: #176749;
+  background: #e6f4ed;
+}
+
+.fleche-operation {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--bord);
+  border-radius: 50%;
+  color: var(--doux);
+  font-size: 1.1rem;
+  transition: transform 180ms ease;
+}
+
+.accueil .carte-choix:hover .fleche-operation {
+  transform: translate(2px, -2px);
+}
+
+.carte-bas {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.8rem;
+}
+
+.accueil .carte-choix strong {
+  font-size: 1.45rem;
+  line-height: 1.25;
+  letter-spacing: -0.04em;
+}
+
+.accueil .carte-choix span {
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.carte-action {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.5rem;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 750;
+}
+
+.carte-action span {
+  font-size: 1.2rem !important;
+  transition: transform 180ms ease;
+}
+
+.accueil .carte-choix:hover .carte-action span {
+  transform: translateX(4px);
+}
+
+/* Le vert devient un accent, pas un fond envahissant. */
+.accueil .carte-choix.acheter {
+  background: #fff;
+  color: var(--encre);
+  border-color: var(--bord);
+}
+
+.accueil .carte-choix.acheter:hover {
+  background: #fff;
+  border-color: #a6d5c2;
+}
+
+.accueil-reassurance {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.4rem;
+  border: 1px solid #e0ebe5;
+  border-radius: 16px;
+  background: #f0f7f3;
+}
+
+.reassurance-icone {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border-radius: 13px;
+  background: #dcefe5;
+  color: #176749;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.accueil-reassurance strong {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-size: 0.92rem;
+}
+
+.accueil-reassurance p {
+  margin: 0;
+  color: var(--doux);
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .accueil {
+    padding-top: 1.2rem;
+  }
+
+  .accueil-hero {
+    min-height: 205px;
+    padding: 1.5rem 1.25rem;
+    margin-bottom: 2rem;
+    border-radius: 20px;
+  }
+
+  .accueil-hero h1 {
+    max-width: 300px;
+    font-size: 1.9rem;
+  }
+
+  .accueil-hero .intro {
+    max-width: 290px;
+    font-size: 0.9rem;
+  }
+
+  .hero-decoration {
+    width: 35%;
+    opacity: 0.65;
+  }
+
+  .hero-crypto {
+    right: -12px;
+    width: 65px;
+    height: 65px;
+    border-radius: 20px;
+    font-size: 2.6rem;
+  }
+
+  .hero-cercle-1 {
+    right: -145px;
+  }
+
+  .hero-cercle-2 {
+    right: -110px;
+  }
+
+  .hero-badge {
+    font-size: 0.62rem;
+  }
+
+  .accueil-section-titre {
+    align-items: flex-start;
+  }
+
+  .accueil-section-titre h2 {
+    font-size: 1.15rem;
+  }
+
+  .securite-badge {
+    font-size: 0.68rem;
+  }
+
+  .accueil .choix {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+
+  .accueil .carte-choix {
+    min-height: 205px;
+    padding: 1.25rem;
+    gap: 1.3rem;
+    border-radius: 18px;
+  }
+
+  .accueil .carte-choix strong {
+    font-size: 1.3rem;
+  }
+
+  .accueil-reassurance {
+    padding: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accueil .carte-choix,
+  .accueil .fleche-operation,
+  .accueil .carte-action span {
+    transition: none;
+  }
+
+  .accueil .carte-choix:hover {
+    transform: none;
+  }
+}
+
+
+/* New style */
+
+```css
+/* =========================================
+   EXCRYPT — PAGE ACHAT PREMIUM
+   ========================================= */
+
+.achat-page {
+  width: min(100% - 2rem, 650px);
+  max-width: 650px;
+  margin-inline: auto;
+  padding-top: 1.5rem;
+}
+
+.achat-entete {
+  margin-bottom: 1.8rem;
+}
+
+.achat-retour {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.8rem;
+  color: var(--doux);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.achat-retour:hover {
+  color: var(--accent);
+}
+
+.achat-retour span {
+  font-size: 1.2rem;
+}
+
+.achat-surtitre {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+}
+
+.achat-point {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.achat-entete h1 {
+  max-width: 560px;
+  margin-bottom: 0.8rem;
+  font-size: clamp(2rem, 5vw, 2.6rem);
+  letter-spacing: -0.055em;
+  line-height: 1.12;
+}
+
+.achat-description {
+  max-width: 520px;
+  margin: 0;
+  color: var(--doux);
+  font-size: 0.98rem;
+  line-height: 1.75;
+}
+
+/* Étapes */
+
+.achat-etapes {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 1.8rem;
+}
+
+.achat-etape {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #8b9791;
+  font-size: 0.78rem;
+}
+
+.achat-etape > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border: 1px solid var(--bord);
+  border-radius: 50%;
+  background: #fff;
+  font-weight: 700;
+}
+
+.achat-etape.active {
+  color: var(--accent-fonce);
+}
+
+.achat-etape.active > span {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.achat-etape-ligne {
+  width: 35px;
+  height: 1px;
+  background: var(--bord);
+}
+
+/* Formulaire */
+
+.achat-formulaire {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 1.6rem;
+  border: 1px solid var(--bord);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 10px 35px rgba(14, 26, 22, 0.035);
+}
+
+.achat-bloc {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  min-width: 0;
+}
+
+.achat-bloc-titre {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.achat-numero {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: 11px;
+  background: var(--accent-clair);
+  color: var(--accent-fonce);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.achat-bloc-titre h2 {
+  margin: 0 0 0.3rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.achat-bloc-titre p {
+  margin: 0;
+  color: var(--doux);
+  font-size: 0.84rem;
+  line-height: 1.6;
+}
+
+.achat-separateur {
+  height: 1px;
+  margin: 1.7rem 0;
+  background: #edf0ee;
+}
+
+/* Champs */
+
+.achat-champ {
+  gap: 0.55rem;
+}
+
+.achat-champ label,
+.achat-telephone label {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.achat-champ input,
+.achat-telephone input,
+.achat-telephone select {
+  min-width: 0;
+  min-height: 49px;
+  border: 1.5px solid #dfe6e2;
+  border-radius: 11px;
+  background: #fbfcfb;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.achat-champ input:focus,
+.achat-telephone input:focus,
+.achat-telephone select:focus {
+  border-color: var(--accent);
+  outline: none;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(20, 120, 92, 0.09);
+}
+
+.achat-champ input[aria-invalid="true"] {
+  border-color: #b42318;
+  background: #fffbfa;
+  box-shadow: none;
+}
+
+.achat-montant-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.achat-montant-input input {
+  width: 100%;
+  padding: 0.9rem 5rem 0.9rem 1rem;
+  color: var(--encre);
+  font-size: 1.25rem;
+  font-weight: 750;
+  letter-spacing: -0.025em;
+}
+
+.achat-montant-input input::-webkit-inner-spin-button,
+.achat-montant-input input::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.achat-montant-input input {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.achat-devise {
+  position: absolute;
+  right: 1rem;
+  color: var(--doux);
+  font-size: 0.8rem;
+  font-weight: 800;
+  pointer-events: none;
+}
+
+.achat-aide {
+  color: var(--doux);
+  font-size: 0.79rem;
+  line-height: 1.6;
+}
+
+.achat-erreur {
+  color: #b42318 !important;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* Estimation de crypto */
+
+.achat-estimation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.2rem;
+  border: 1px solid #d9ebe1;
+  border-radius: 15px;
+  background: linear-gradient(120deg, #eff8f2, #f7fbf8);
+}
+
+.estimation-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #526c60;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.estimation-valeur {
+  color: #124d37;
+  font-size: clamp(1.5rem, 5vw, 2rem);
+  font-weight: 850;
+  letter-spacing: -0.055em;
+  overflow-wrap: anywhere;
+}
+
+.estimation-valeur span {
+  margin-left: 0.45rem;
+  color: #34755a;
+  font-size: 0.9rem;
+  letter-spacing: 0;
+}
+
+.estimation-icone {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border-radius: 13px;
+  background: #d9eee2;
+  color: #176749;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.achat-note-taux {
+  margin: -0.5rem 0 0;
+  color: var(--doux);
+  font-size: 0.77rem;
+  line-height: 1.6;
+}
+
+/* Adresse et avertissement */
+
+.achat-avertissement {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid #f1e2bc;
+  border-radius: 11px;
+  background: #fffbef;
+}
+
+.achat-avertissement > span {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: 50%;
+  background: #f6e7bc;
+  color: #805b13;
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+.achat-avertissement p {
+  margin: 0;
+  color: #75571b;
+  font-size: 0.79rem;
+  line-height: 1.65;
+}
+
+/* Téléphone */
+
+.achat-telephone {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.achat-telephone > div {
+  min-width: 0;
+}
+
+/* Erreur serveur */
+
+.achat-erreur-global {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin: 1.4rem 0 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid #fda29b;
+  border-radius: 11px;
+  background: #fff1f0;
+  color: #b42318;
+  font-size: 0.87rem;
+  line-height: 1.6;
+}
+
+.achat-erreur-global > span {
+  font-weight: 900;
+}
+
+/* Pied de formulaire */
+
+.achat-pied-formulaire {
+  margin-top: 1.8rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid #edf0ee;
+}
+
+.achat-securite {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+  color: var(--doux);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.achat-securite > span:first-child {
+  color: var(--accent);
+  font-size: 1.1rem;
+}
+
+.achat-submit {
+  display: flex;
+  width: 100%;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  box-shadow: 0 6px 16px rgba(20, 120, 92, 0.12);
+  transition: transform 160ms ease, background 160ms ease;
+}
+
+.achat-submit:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.achat-submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.achat-conditions {
+  margin: 0.8rem 0 0;
+  color: #78857e;
+  font-size: 0.76rem;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.achat-spinner {
+  width: 17px;
+  height: 17px;
+  border: 2px solid rgba(255,255,255,0.45);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: achat-rotation 700ms linear infinite;
+}
+
+@keyframes achat-rotation {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Confirmation */
+
+.confirmation-achat {
+  margin-top: 1.5rem;
+  padding: 2rem;
+  border: 1px solid var(--bord);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 10px 35px rgba(14, 26, 22, 0.04);
+}
+
+.confirmation-icone {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  margin-bottom: 1.4rem;
+  border-radius: 19px;
+  background: #e3f5e9;
+  color: #16764f;
+}
+
+.confirmation-icone svg {
+  width: 31px;
+  height: 31px;
+}
+
+.confirmation-achat h1 {
+  margin-bottom: 0.8rem;
+  font-size: 2rem;
+}
+
+.confirmation-description {
+  margin-bottom: 1.5rem;
+  color: var(--doux);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.reference-achat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 1.2rem;
+  border: 1px dashed #a6d5c2;
+  border-radius: 13px;
+  background: #f2faf5;
+}
+
+.reference-achat span,
+.confirmation-detail > span {
+  color: var(--doux);
+  font-size: 0.8rem;
+}
+
+.reference-achat strong {
+  color: var(--accent-fonce);
+  font-size: 1.15rem;
+  overflow-wrap: anywhere;
+}
+
+.confirmation-detail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #edf0ee;
+}
+
+.confirmation-detail strong {
+  font-size: 0.88rem;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.confirmation-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  margin-top: 1.3rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: #f4f7f5;
+}
+
+.confirmation-note > span {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.confirmation-note p {
+  margin: 0;
+  color: var(--doux);
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+.confirmation-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.confirmation-actions .bouton {
+  width: 100%;
+  min-height: 48px;
+}
+
+/* Adaptation mobile */
+
+@media (max-width: 640px) {
+  .achat-page {
+    width: min(100% - 1.25rem, 650px);
+    padding-top: 0.9rem;
+  }
+
+  .achat-retour {
+    margin-bottom: 1.4rem;
+  }
+
+  .achat-entete h1 {
+    font-size: 2rem;
+  }
+
+  .achat-description {
+    font-size: 0.9rem;
+  }
+
+  .achat-etapes {
+    gap: 0.55rem;
+    margin-top: 1.4rem;
+  }
+
+  .achat-etape {
+    gap: 0.35rem;
+    font-size: 0.69rem;
+  }
+
+  .achat-etape > span {
+    width: 25px;
+    height: 25px;
+  }
+
+  .achat-etape-ligne {
+    width: 20px;
+  }
+
+  .achat-formulaire {
+    padding: 1.15rem;
+    border-radius: 17px;
+  }
+
+  .achat-bloc-titre {
+    gap: 0.65rem;
+  }
+
+  .achat-numero {
+    width: 31px;
+    height: 31px;
+    border-radius: 9px;
+    font-size: 0.72rem;
+  }
+
+  .achat-bloc-titre h2 {
+    font-size: 0.98rem;
+  }
+
+  .achat-bloc-titre p {
+    font-size: 0.8rem;
+  }
+
+  .achat-separateur {
+    margin: 1.4rem 0;
+  }
+
+  .achat-montant-input input {
+    font-size: 1.15rem;
+  }
+
+  .achat-estimation {
+    padding: 1rem;
+  }
+
+  .confirmation-achat {
+    padding: 1.3rem;
+    border-radius: 17px;
+  }
+
+  .confirmation-achat h1 {
+    font-size: 1.75rem;
+  }
+
+  .confirmation-detail {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .confirmation-detail strong {
+    text-align: left;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .achat-spinner {
+    animation: none;
+  }
+
+  .achat-submit {
+    transition: none;
+  }
+}
+
+/* style */
+
+```css
+/* =========================================
+   EXCRYPT — PAGE VENDRE PREMIUM
+   ========================================= */
+
+.vente-page {
+  width: min(100% - 2rem, 650px);
+  max-width: 650px;
+  margin-inline: auto;
+  padding-top: 1.5rem;
+}
+
+.vente-retour {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.8rem;
+  color: var(--doux);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.vente-retour:hover {
+  color: var(--accent);
+}
+
+.vente-retour span {
+  font-size: 1.2rem;
+}
+
+.vente-entete {
+  margin-bottom: 1.8rem;
+}
+
+.vente-surtitre {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+}
+
+.vente-point {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.vente-entete h1 {
+  margin-bottom: 0.8rem;
+  font-size: clamp(2rem, 5vw, 2.55rem);
+  line-height: 1.12;
+  letter-spacing: -0.055em;
+}
+
+.vente-entete > p {
+  margin: 0;
+  color: var(--doux);
+  font-size: 0.95rem;
+  line-height: 1.75;
+}
+
+/* Étapes */
+
+.vente-etapes {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 1.8rem;
+}
+
+.vente-etape {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #8b9791;
+  font-size: 0.78rem;
+}
+
+.vente-etape > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border: 1px solid var(--bord);
+  border-radius: 50%;
+  background: #fff;
+  font-weight: 700;
+}
+
+.vente-etape.active {
+  color: var(--accent-fonce);
+}
+
+.vente-etape.active > span {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.vente-etape-ligne {
+  width: 35px;
+  height: 1px;
+  background: var(--bord);
+}
+
+/* Formulaire */
+
+.vente-formulaire {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 1.6rem;
+  border: 1px solid var(--bord);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 10px 35px rgba(14, 26, 22, 0.035);
+}
+
+.vente-bloc {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  min-width: 0;
+}
+
+.vente-bloc-titre {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.vente-numero {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: 11px;
+  background: var(--accent-clair);
+  color: var(--accent-fonce);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.vente-bloc-titre h2 {
+  margin: 0 0 0.3rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.vente-bloc-titre p {
+  margin: 0;
+  color: var(--doux);
+  font-size: 0.84rem;
+  line-height: 1.65;
+}
+
+.vente-separateur {
+  height: 1px;
+  margin: 1.7rem 0;
+  background: #edf0ee;
+}
+
+/* Champs du téléphone */
+
+.vente-formulaire input,
+.vente-formulaire select {
+  min-height: 49px;
+  border: 1.5px solid #dfe6e2;
+  border-radius: 11px;
+  background: #fbfcfb;
+}
+
+.vente-formulaire input:focus,
+.vente-formulaire select:focus {
+  border-color: var(--accent);
+  outline: none;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(20, 120, 92, 0.09);
+}
+
+/* Erreurs */
+
+.vente-erreur {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin: 1.4rem 0 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid #fda29b;
+  border-radius: 11px;
+  background: #fff1f0;
+  color: #b42318;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.vente-erreur > span {
+  font-weight: 900;
+}
+
+/* Bouton principal */
+
+.vente-pied-formulaire {
+  margin-top: 1.8rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid #edf0ee;
+}
+
+.vente-rappel {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  margin-bottom: 1.1rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid #dcece3;
+  border-radius: 11px;
+  background: #f1f8f3;
+}
+
+.vente-rappel > span {
+  color: var(--accent);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.vente-rappel p {
+  margin: 0;
+  color: #426052;
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+.vente-submit {
+  display: flex;
+  width: 100%;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  border-radius: 12px;
+  font-size: 0.92rem;
+  box-shadow: 0 6px 16px rgba(20, 120, 92, 0.12);
+  transition: transform 160ms ease;
+}
+
+.vente-submit:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.vente-submit:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.vente-conditions {
+  margin: 0.8rem 0 0;
+  color: #78857e;
+  font-size: 0.76rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.vente-spinner {
+  width: 17px;
+  height: 17px;
+  border: 2px solid rgba(255,255,255,0.45);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: vente-rotation 700ms linear infinite;
+}
+
+@keyframes vente-rotation {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Confirmation et adresse de dépôt */
+
+.vente-confirmation {
+  padding: 1.6rem;
+  border: 1px solid var(--bord);
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 10px 35px rgba(14, 26, 22, 0.035);
+}
+
+.vente-confirmation-entete {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.vente-icone-confirmation {
+  display: grid;
+  place-items: center;
+  width: 55px;
+  height: 55px;
+  flex: none;
+  border-radius: 17px;
+  background: #e3f5e9;
+  color: #16764f;
+}
+
+.vente-icone-confirmation svg {
+  width: 27px;
+  height: 27px;
+}
+
+.vente-etiquette {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.vente-confirmation-entete h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.25rem;
+  letter-spacing: -0.03em;
+}
+
+.vente-confirmation-entete p {
+  margin: 0;
+  color: var(--doux);
+  font-size: 0.84rem;
+}
+
+.vente-avertissement {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 1rem;
+  border: 1px solid #f1e2bc;
+  border-radius: 12px;
+  background: #fffbef;
+}
+
+.vente-avertissement > span {
+  display: grid;
+  place-items: center;
+  width: 23px;
+  height: 23px;
+  flex: none;
+  border-radius: 50%;
+  background: #f6e7bc;
+  color: #805b13;
+  font-weight: 900;
+}
+
+.vente-avertissement p {
+  margin: 0;
+  color: #75571b;
+  font-size: 0.82rem;
+  line-height: 1.7;
+}
+
+.vente-adresse-zone {
+  margin-top: 1.5rem;
+}
+
+.vente-adresse-zone > label {
+  display: block;
+  margin-bottom: 0.65rem;
+  font-size: 0.88rem;
+  font-weight: 750;
+}
+
+.vente-adresse-boite {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.75rem;
+  border: 1px solid #cde5d7;
+  border-radius: 13px;
+  background: #f4faf6;
+}
+
+.vente-adresse-boite code {
+  flex: 1;
+  min-width: 0;
+  color: #174d37;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+
+.vente-copier {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  flex: none;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #cde5d7;
+  border-radius: 9px;
+  background: #fff;
+  color: var(--accent-fonce);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 750;
+  cursor: pointer;
+  transition: background 150ms ease;
+}
+
+.vente-copier:hover {
+  background: #e8f5ed;
+}
+
+.vente-copier.copie {
+  border-color: #a4d5b8;
+  background: #e3f5e9;
+  color: #176749;
+}
+
+.vente-aide-adresse {
+  margin: 0.65rem 0 0;
+  color: var(--doux);
+  font-size: 0.77rem;
+  line-height: 1.6;
+}
+
+/* Informations de la transaction */
+
+.vente-details {
+  margin-top: 1.5rem;
+  padding: 0 1rem;
+  border: 1px solid #e6ebe8;
+  border-radius: 13px;
+}
+
+.vente-detail-ligne {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #edf0ee;
+}
+
+.vente-detail-ligne:last-child {
+  border-bottom: none;
+}
+
+.vente-detail-ligne > span {
+  color: var(--doux);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.vente-detail-ligne > strong {
+  max-width: 60%;
+  color: var(--encre);
+  font-size: 0.84rem;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.vente-info-paiement {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  margin-top: 1.2rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: #f3f7f4;
+}
+
+.vente-info-paiement > span {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.vente-info-paiement p {
+  margin: 0;
+  color: var(--doux);
+  font-size: 0.81rem;
+  line-height: 1.7;
+}
+
+.vente-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.vente-actions .bouton {
+  display: flex;
+  width: 100%;
+  min-height: 49px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 11px;
+}
+
+/* Mobile */
+
+@media (max-width: 640px) {
+  .vente-page {
+    width: min(100% - 1.25rem, 650px);
+    padding-top: 0.9rem;
+  }
+
+  .vente-retour {
+    margin-bottom: 1.4rem;
+  }
+
+  .vente-entete h1 {
+    font-size: 2rem;
+  }
+
+  .vente-entete > p {
+    font-size: 0.9rem;
+  }
+
+  .vente-etapes {
+    gap: 0.55rem;
+    margin-top: 1.4rem;
+  }
+
+  .vente-etape {
+    gap: 0.35rem;
+    font-size: 0.69rem;
+  }
+
+  .vente-etape > span {
+    width: 25px;
+    height: 25px;
+  }
+
+  .vente-etape-ligne {
+    width: 20px;
+  }
+
+  .vente-formulaire,
+  .vente-confirmation {
+    padding: 1.15rem;
+    border-radius: 17px;
+  }
+
+  .vente-bloc-titre {
+    gap: 0.65rem;
+  }
+
+  .vente-numero {
+    width: 31px;
+    height: 31px;
+    border-radius: 9px;
+    font-size: 0.72rem;
+  }
+
+  .vente-bloc-titre h2 {
+    font-size: 0.98rem;
+  }
+
+  .vente-bloc-titre p {
+    font-size: 0.8rem;
+  }
+
+  .vente-separateur {
+    margin: 1.4rem 0;
+  }
+
+  .vente-adresse-boite {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .vente-copier {
+    min-height: 43px;
+  }
+
+  .vente-detail-ligne {
+    gap: 0.7rem;
+  }
+
+  .vente-detail-ligne > span,
+  .vente-detail-ligne > strong {
+    font-size: 0.79rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vente-spinner {
+    animation: none;
+  }
+
+  .vente-submit,
+  .vente-copier {
+    transition: none;
+  }
+}
