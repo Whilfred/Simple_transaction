@@ -39,4 +39,11 @@ $$ LANGUAGE plpgsql;
 DROP TRIGGER IF EXISTS commandes_maj ON commandes;
 CREATE TRIGGER commandes_maj BEFORE UPDATE ON commandes
   FOR EACH ROW EXECUTE FUNCTION maj_updated_at();
-  
+
+
+
+
+
+
+
+
