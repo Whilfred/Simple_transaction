@@ -16,11 +16,6 @@ export default function Accueil() {
       {/* Bienvenue */}
       <div className="accueil-hero">
         <div className="hero-contenu">
-          <span className="hero-badge">
-            <span className="indicateur-en-ligne" />
-            EXCRYPT · ÉCHANGE CRYPTO
-          </span>
-
           <h1>
             {prenom ? `Bonjour ${prenom} 👋` : 'Bienvenue sur ExCrypt'}
           </h1>
