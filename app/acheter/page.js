@@ -7,13 +7,14 @@ import ChampTelephone from '@/components/ChampTelephone';
 import { tauxPour, telVide, nomReseau } from '@/lib/config';
 import { adresseValide, aideAdresse } from '@/lib/adresses';
 import { ajouterCommande, lire } from '@/lib/storage';
+import { redirigerVersWhatsApp } from '@/lib/whatsapp';
+
 import {
   erreurMontant,
   erreurAdresse,
   erreurTelephone,
   messageServeur,
 } from '@/lib/erreurs';
-
 export default function Acheter() {
   const [choix, setChoix] = useState({
     crypto: 'USDT',
@@ -99,6 +100,23 @@ export default function Acheter() {
         }));
         return;
       }
+
+const messageWhatsApp = [
+  'Bonjour ExCrypt ! Je viens de créer une demande d’achat.',
+  '',
+  `Référence : ${data.reference}`,
+  `Cryptomonnaie : ${choix.crypto}`,
+  `Réseau : ${reseauNom}`,
+  `Montant à payer : ${fcfa.toLocaleString('fr-FR')} FCFA`,
+  `Montant estimé à recevoir : ${estimation ?? 'À confirmer'} ${choix.crypto}`,
+  `Adresse de réception : ${adresse.trim()}`,
+  `Opérateur Mobile Money : ${tel.operateur}`,
+  `Mon numéro : ${tel.indicatif} ${tel.numero.trim()}`,
+  '',
+  'Merci de me guider pour la suite de mon achat.',
+].join('\n');
+
+redirigerVersWhatsApp(messageWhatsApp);
 
       ajouterCommande({
         id: data.reference,
