@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -6,12 +7,14 @@ import ChoixCrypto from '@/components/ChoixCrypto';
 import ChampTelephone from '@/components/ChampTelephone';
 import { telVide, nomReseau } from '@/lib/config';
 import { ajouterCommande, lire } from '@/lib/storage';
+import { redirigerVersWhatsApp } from '@/lib/whatsapp';
 
 export default function Vendre() {
   const [choix, setChoix] = useState({
     crypto: 'USDT',
     reseau: 'TRC20',
   });
+
   const [depot, setDepot] = useState(telVide());
   const [commande, setCommande] = useState(null);
   const [copie, setCopie] = useState(false);
@@ -41,7 +44,9 @@ export default function Vendre() {
     try {
       const reponse = await fetch('/api/commandes', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           type: 'vente',
           ...choix,
@@ -61,24 +66,73 @@ export default function Vendre() {
         return;
       }
 
-      ajouterCommande({
+      // Vérifier que le serveur a fourni les informations nécessaires.
+      if (!data.reference || !data.adresseDepot) {
+        setErreur(
+          'La réponse du serveur est incomplète. ' +
+            'Contactez le support avant tout transfert de cryptomonnaies.'
+        );
+        return;
+      }
+
+      const nouvelleCommande = {
         id: data.reference,
         type: 'vente',
         date: new Date().toISOString(),
         statut: data.statut,
         ...choix,
-      });
-
-      setCommande({
-        id: data.reference,
-        ...choix,
         adresseDepot: data.adresseDepot,
         numeroDepot: `${depot.indicatif} ${numero}`,
         operateurDepot: depot.operateur,
+      };
+
+      // 1. Enregistrer la commande localement.
+      ajouterCommande({
+        id: nouvelleCommande.id,
+        type: nouvelleCommande.type,
+        date: nouvelleCommande.date,
+        statut: nouvelleCommande.statut,
+        crypto: choix.crypto,
+        reseau: choix.reseau,
       });
-    } catch {
+
+      // 2. Préparer le message WhatsApp avec les données réelles.
+      const messageWhatsApp = [
+        'Bonjour ExCrypt ! Je viens de créer une demande de vente.',
+        '',
+        `Référence : ${nouvelleCommande.id}`,
+        `Cryptomonnaie : ${choix.crypto}`,
+        `Réseau : ${nomReseau(choix.crypto, choix.reseau)}`,
+        `Adresse de dépôt ExCrypt : ${nouvelleCommande.adresseDepot}`,
+        `Opérateur Mobile Money : ${depot.operateur}`,
+        `Numéro de réception : ${nouvelleCommande.numeroDepot}`,
+        '',
+        'Merci de confirmer les étapes à suivre pour recevoir mes FCFA.',
+      ].join('\n');
+
+      // 3. Afficher les instructions de dépôt.
+      // La commande est déjà enregistrée avant la redirection.
+      setCommande(nouvelleCommande);
+
+      // 4. Ouvrir WhatsApp sans annuler la commande si la
+      // redirection échoue. Le message reste à envoyer par le client.
+      try {
+        redirigerVersWhatsApp(messageWhatsApp);
+      } catch (erreurWhatsApp) {
+        console.error(
+          'Impossible d’ouvrir WhatsApp :',
+          erreurWhatsApp
+        );
+      }
+    } catch (erreurCreation) {
+      console.error(
+        'Erreur lors de la création de la demande de vente :',
+        erreurCreation
+      );
+
       setErreur(
-        'Connexion impossible. Vérifiez votre internet et réessayez.'
+        'Impossible de terminer la demande. Vérifiez votre connexion ' +
+          'et consultez votre tableau de bord avant de réessayer.'
       );
     } finally {
       setEnvoi(false);
@@ -89,15 +143,17 @@ export default function Vendre() {
     try {
       await navigator.clipboard.writeText(commande.adresseDepot);
       setCopie(true);
+
       setTimeout(() => setCopie(false), 1800);
     } catch {
       setErreur(
-        'Impossible de copier automatiquement. Sélectionnez et copiez l’adresse.'
+        'Impossible de copier automatiquement. ' +
+          'Sélectionnez et copiez l’adresse.'
       );
     }
   }
 
-  // Étape 2 : instructions de dépôt
+  // Étape 2 : instructions de dépôt.
   if (commande) {
     const reseau = nomReseau(commande.crypto, commande.reseau);
 
@@ -139,7 +195,9 @@ export default function Vendre() {
             </div>
 
             <div>
-              <span className="vente-etiquette">ÉTAPE SUIVANTE</span>
+              <span className="vente-etiquette">
+                ÉTAPE SUIVANTE
+              </span>
               <h2>Adresse de dépôt</h2>
               <p>Réseau sélectionné : {reseau}</p>
             </div>
@@ -155,10 +213,14 @@ export default function Vendre() {
           </div>
 
           <div className="vente-adresse-zone">
-            <label htmlFor="adresse-depot">Adresse de réception du dépôt</label>
+            <label htmlFor="adresse-depot">
+              Adresse de réception du dépôt
+            </label>
 
             <div className="vente-adresse-boite">
-              <code id="adresse-depot">{commande.adresseDepot}</code>
+              <code id="adresse-depot">
+                {commande.adresseDepot}
+              </code>
 
               <button
                 type="button"
@@ -221,7 +283,8 @@ export default function Vendre() {
 
           <div className="vente-actions">
             <Link href="/dashboard" className="bouton plein">
-              Suivre mon opération <span aria-hidden="true">→</span>
+              Suivre mon opération{' '}
+              <span aria-hidden="true">→</span>
             </Link>
 
             <Link href="/accueil" className="bouton">
@@ -233,7 +296,7 @@ export default function Vendre() {
     );
   }
 
-  // Étape 1 : création de la demande
+  // Étape 1 : création de la demande.
   return (
     <section className="page vente-page">
       <Link href="/accueil" className="vente-retour">
@@ -272,6 +335,7 @@ export default function Vendre() {
         <div className="vente-bloc">
           <div className="vente-bloc-titre">
             <span className="vente-numero">01</span>
+
             <div>
               <h2>Cryptomonnaie à vendre</h2>
               <p>Choisissez la monnaie et son réseau de transfert.</p>
@@ -286,6 +350,7 @@ export default function Vendre() {
         <div className="vente-bloc">
           <div className="vente-bloc-titre">
             <span className="vente-numero">02</span>
+
             <div>
               <h2>Recevoir mes FCFA</h2>
               <p>
@@ -314,6 +379,7 @@ export default function Vendre() {
         <div className="vente-pied-formulaire">
           <div className="vente-rappel">
             <span aria-hidden="true">↗</span>
+
             <p>
               L'adresse de dépôt vous sera communiquée après la création
               de votre demande.
