@@ -135,6 +135,14 @@ input:focus, select:focus { border-color: var(--accent); outline: none; box-shad
 .selecteur-option.actif { background: var(--accent-clair); }
 .selecteur-option.choisi { font-weight: 700; color: var(--accent-fonce); }
 
+/* Liste déroulante pleine largeur (ex. choix de la crypto) */
+.selecteur.large .selecteur-liste { left: 0; right: 0; width: 100%; max-width: none; }
+.selecteur.large .selecteur-option { padding: 0.7rem 0.75rem; }
+
+/* Liste déroulante pleine largeur (ex. choix de la crypto) */
+.selecteur.large .selecteur-liste { left: 0; right: 0; width: 100%; max-width: none; }
+.selecteur.large .selecteur-option { padding: 0.7rem 0.75rem; }
+
 /* ============ Erreurs de champ ============ */
 .champ input[aria-invalid="true"] { border-color: #b42318; background: #fffbfa; }
 .champ small[role="alert"] { color: #b42318; font-weight: 500; }
@@ -618,7 +626,6 @@ input:focus, select:focus { border-color: var(--accent); outline: none; box-shad
 
 /* New style */
 
-```css
 /* =========================================
    EXCRYPT — PAGE ACHAT PREMIUM
    ========================================= */
@@ -2031,3 +2038,18 @@ svg {
   }
 }
 
+/* Mobile : la liste des cryptos prend la largeur de l'écran */
+@media (max-width: 640px) {
+  .champ > .selecteur .selecteur-liste {
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    top: auto;
+    bottom: calc(76px + env(safe-area-inset-bottom));
+    width: auto;
+    max-width: none;
+    max-height: 55vh;
+    z-index: 200;
+    box-shadow: 0 -8px 32px rgba(14, 26, 22, 0.22);
+  }
+}

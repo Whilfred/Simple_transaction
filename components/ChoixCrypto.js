@@ -28,6 +28,7 @@ export default function ChoixCrypto({ valeur, onChange }) {
           valeur={crypto.code}
           options={OPTIONS}
           onChange={changerCrypto}
+          large
         />
       </div>
 

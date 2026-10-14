@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 // Menu déroulant avec images (drapeaux ou logos).
 // options = [{ value, label, court?, flag?, logo?, groupe? }]
-export default function Selecteur({ id, label, valeur, options, onChange }) {
+export default function Selecteur({ id, label, valeur, options, onChange, large = false }) {
   const [ouvert, setOuvert] = useState(false);
   const [actif, setActif] = useState(0);
   const racine = useRef(null);
@@ -56,7 +56,7 @@ export default function Selecteur({ id, label, valeur, options, onChange }) {
     ) : null;
 
   return (
-    <div className="selecteur" ref={racine}>
+    <div className={'selecteur' + (large ? ' large' : '')} ref={racine}>
       <button
         type="button"
         id={id}
