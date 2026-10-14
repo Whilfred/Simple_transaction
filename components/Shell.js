@@ -67,8 +67,7 @@ export default function Shell({ children }) {
       <header className="entete">
         <div className="conteneur entete-ligne">
           <Link href="/accueil" className="logo">{SITE.nom}</Link>
-            {prenom && <span className="salut">{prenom}</span>}
-          {prenom && <span className="salut salut-mobile">{prenom}</span>}
+          {prenom && <span className="salut">{prenom}</span>}
         </div>
       </header>
 
