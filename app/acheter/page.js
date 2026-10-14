@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import ChoixCrypto from '@/components/ChoixCrypto';
 import ChampTelephone from '@/components/ChampTelephone';
-import { tauxPour, telVide, nomReseau } from '@/lib/config';
+import { CRYPTOS, tauxPour, telVide, nomReseau } from '@/lib/config';
 import { adresseValide, aideAdresse } from '@/lib/adresses';
 import { ajouterCommande, lire } from '@/lib/storage';
 import { redirigerVersWhatsApp } from '@/lib/whatsapp';
@@ -15,6 +15,7 @@ import {
   erreurTelephone,
   messageServeur,
 } from '@/lib/erreurs';
+
 export default function Acheter() {
   const [choix, setChoix] = useState({
     crypto: 'USDT',
@@ -34,8 +35,13 @@ export default function Acheter() {
   });
 
   const fcfa = Number(montant) || 0;
+
+  // L'estimation n'est fiable que pour les cryptos à ~1 $ (USDT, USDC).
+  // Pour les autres (BTC, ETH, SOL…), le prix varie : il est confirmé par l'équipe.
+  const cryptoChoisie = CRYPTOS.find((c) => c.code === choix.crypto);
+  const estimable = !!cryptoChoisie?.estimable;
   const estimation =
-    fcfa > 0 ? (fcfa / tauxPour(fcfa)).toFixed(2) : null;
+    estimable && fcfa > 0 ? (fcfa / tauxPour(fcfa)).toFixed(2) : null;
   const reseauNom = nomReseau(choix.crypto, choix.reseau);
 
   function verifierChamp(champ) {
@@ -101,22 +107,24 @@ export default function Acheter() {
         return;
       }
 
-const messageWhatsApp = [
-  'Bonjour ExCrypt ! Je viens de créer une demande d’achat.',
-  '',
-  `Référence : ${data.reference}`,
-  `Cryptomonnaie : ${choix.crypto}`,
-  `Réseau : ${reseauNom}`,
-  `Montant à payer : ${fcfa.toLocaleString('fr-FR')} FCFA`,
-  `Montant estimé à recevoir : ${estimation ?? 'À confirmer'} ${choix.crypto}`,
-  `Adresse de réception : ${adresse.trim()}`,
-  `Opérateur Mobile Money : ${tel.operateur}`,
-  `Mon numéro : ${tel.indicatif} ${tel.numero.trim()}`,
-  '',
-  'Merci de me guider pour la suite de mon achat.',
-].join('\n');
+      const messageWhatsApp = [
+        'Bonjour ExCrypt ! Je viens de créer une demande d’achat.',
+        '',
+        `Référence : ${data.reference}`,
+        `Cryptomonnaie : ${choix.crypto}`,
+        `Réseau : ${reseauNom}`,
+        `Montant à payer : ${fcfa.toLocaleString('fr-FR')} FCFA`,
+        `Montant estimé à recevoir : ${
+          estimation ? `${estimation} ${choix.crypto}` : 'À confirmer'
+        }`,
+        `Adresse de réception : ${adresse.trim()}`,
+        `Opérateur Mobile Money : ${tel.operateur}`,
+        `Mon numéro : ${tel.indicatif} ${tel.numero.trim()}`,
+        '',
+        'Merci de me guider pour la suite de mon achat.',
+      ].join('\n');
 
-redirigerVersWhatsApp(messageWhatsApp);
+      redirigerVersWhatsApp(messageWhatsApp);
 
       ajouterCommande({
         id: data.reference,
@@ -303,8 +311,17 @@ redirigerVersWhatsApp(messageWhatsApp);
             <div>
               <span className="estimation-label">Vous recevrez environ</span>
               <div className="estimation-valeur">
-                {estimation || '0.00'}
-                <span>{choix.crypto}</span>
+                {estimable ? (
+                  <>
+                    {estimation || '0.00'}
+                    <span>{choix.crypto}</span>
+                  </>
+                ) : (
+                  <>
+                    À confirmer
+                    <span>{choix.crypto}</span>
+                  </>
+                )}
               </div>
             </div>
 
@@ -314,7 +331,9 @@ redirigerVersWhatsApp(messageWhatsApp);
           </div>
 
           <p className="achat-note-taux">
-            Estimation indicative selon le taux applicable à votre montant.
+            {estimable
+              ? 'Estimation indicative selon le taux applicable à votre montant.'
+              : `Le prix du ${choix.crypto} varie en permanence : le montant exact vous sera confirmé par notre équipe avant le paiement.`}
           </p>
         </div>
 

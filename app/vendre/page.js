@@ -1,11 +1,10 @@
-
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
 import ChoixCrypto from '@/components/ChoixCrypto';
 import ChampTelephone from '@/components/ChampTelephone';
-import { telVide, nomReseau } from '@/lib/config';
+import { telVide, nomReseau, memoPour } from '@/lib/config';
 import { ajouterCommande, lire } from '@/lib/storage';
 import { redirigerVersWhatsApp } from '@/lib/whatsapp';
 
@@ -18,6 +17,7 @@ export default function Vendre() {
   const [depot, setDepot] = useState(telVide());
   const [commande, setCommande] = useState(null);
   const [copie, setCopie] = useState(false);
+  const [copieMemo, setCopieMemo] = useState(false);
   const [envoi, setEnvoi] = useState(false);
   const [erreur, setErreur] = useState('');
 
@@ -82,6 +82,8 @@ export default function Vendre() {
         statut: data.statut,
         ...choix,
         adresseDepot: data.adresseDepot,
+        // MEMO obligatoire pour certains réseaux (ex. XRP) : sans lui, les fonds sont perdus.
+        memoDepot: memoPour(choix.crypto, choix.reseau),
         numeroDepot: `${depot.indicatif} ${numero}`,
         operateurDepot: depot.operateur,
       };
@@ -104,6 +106,9 @@ export default function Vendre() {
         `Cryptomonnaie : ${choix.crypto}`,
         `Réseau : ${nomReseau(choix.crypto, choix.reseau)}`,
         `Adresse de dépôt ExCrypt : ${nouvelleCommande.adresseDepot}`,
+        ...(nouvelleCommande.memoDepot
+          ? [`MEMO obligatoire : ${nouvelleCommande.memoDepot}`]
+          : []),
         `Opérateur Mobile Money : ${depot.operateur}`,
         `Numéro de réception : ${nouvelleCommande.numeroDepot}`,
         '',
@@ -139,16 +144,16 @@ export default function Vendre() {
     }
   }
 
-  async function copier() {
+  async function copier(texte, marquerCopie) {
     try {
-      await navigator.clipboard.writeText(commande.adresseDepot);
-      setCopie(true);
+      await navigator.clipboard.writeText(texte);
+      marquerCopie(true);
 
-      setTimeout(() => setCopie(false), 1800);
+      setTimeout(() => marquerCopie(false), 1800);
     } catch {
       setErreur(
         'Impossible de copier automatiquement. ' +
-          'Sélectionnez et copiez l’adresse.'
+          'Sélectionnez et copiez le texte.'
       );
     }
   }
@@ -225,7 +230,7 @@ export default function Vendre() {
               <button
                 type="button"
                 className={`vente-copier ${copie ? 'copie' : ''}`}
-                onClick={copier}
+                onClick={() => copier(commande.adresseDepot, setCopie)}
                 aria-label="Copier l'adresse de dépôt"
               >
                 {copie ? (
@@ -244,6 +249,45 @@ export default function Vendre() {
               Utilisez le bouton Copier pour éviter les erreurs de saisie.
             </p>
           </div>
+
+          {commande.memoDepot && (
+            <>
+              <div className="vente-avertissement">
+                <span aria-hidden="true">!</span>
+                <p>
+                  <strong>MEMO obligatoire.</strong> Pour ce réseau, vous
+                  devez renseigner l'adresse <strong>et</strong> le MEMO
+                  (aussi appelé tag). Sans le MEMO, vos fonds seront
+                  perdus.
+                </p>
+              </div>
+
+              <div className="vente-adresse-zone">
+                <label htmlFor="memo-depot">MEMO / Tag de destination</label>
+
+                <div className="vente-adresse-boite">
+                  <code id="memo-depot">{commande.memoDepot}</code>
+
+                  <button
+                    type="button"
+                    className={`vente-copier ${copieMemo ? 'copie' : ''}`}
+                    onClick={() => copier(commande.memoDepot, setCopieMemo)}
+                    aria-label="Copier le MEMO"
+                  >
+                    {copieMemo ? (
+                      <>
+                        <span aria-hidden="true">✓</span> Copié
+                      </>
+                    ) : (
+                      <>
+                        <span aria-hidden="true">▢</span> Copier
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
 
           <div className="vente-details">
             <div className="vente-detail-ligne">
