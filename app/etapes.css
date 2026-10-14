@@ -1,0 +1,308 @@
+/* =========================================
+   EXCRYPT — ÉTAPES (achat en 4 étapes, vente en 2)
+   Fichier importé par app/acheter/page.js et app/vendre/page.js
+   ========================================= */
+
+/* ---------- Indicateur d'étapes ---------- */
+.etp { margin-top: 1.7rem; }
+.etp-liste { display: flex; list-style: none; margin: 0; padding: 0; }
+
+.etp-item {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  text-align: center;
+  color: #8b9791;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+/* Trait qui relie l'étape à la précédente */
+.etp-item:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  right: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--bord);
+  transition: background 250ms ease;
+}
+.etp-item.fait::before,
+.etp-item.active::before { background: var(--accent); }
+
+.etp-pastille {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--bord);
+  border-radius: 50%;
+  background: #fff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  transition: background 250ms ease, border-color 250ms ease, box-shadow 250ms ease;
+}
+
+.etp-item.active,
+.etp-item.fait { color: var(--accent-fonce); }
+
+.etp-item.active .etp-pastille {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 0 5px var(--accent-clair);
+}
+.etp-item.fait .etp-pastille {
+  border-color: var(--accent);
+  background: var(--accent-clair);
+  color: var(--accent-fonce);
+}
+.etp-nom { line-height: 1.2; overflow-wrap: normal !important; }
+
+/* ---------- Panneau d'une étape ---------- */
+.etp-panneau { animation: etp-entree 260ms ease both; }
+.etp-panneau h2:focus { outline: none; }
+
+@keyframes etp-entree {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.achat-bloc-titre .etp-compteur,
+.vente-bloc-titre .etp-compteur {
+  margin: 0 0 0.25rem;
+  color: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.etp-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  background: #f3f7f4;
+}
+.etp-info > span { color: var(--accent); font-weight: 800; }
+.etp-info p { margin: 0; color: var(--doux); font-size: 0.8rem; line-height: 1.65; }
+
+/* Rappel de la crypto choisie (logo + réseau) */
+.etp-puce {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  align-self: flex-start;
+  padding: 0.4rem 0.85rem 0.4rem 0.45rem;
+  border: 1px solid #d9ebe1;
+  border-radius: 999px;
+  background: #f1f8f3;
+  color: #124d37;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+.etp-puce img { width: 22px; height: 22px; border-radius: 50%; flex: none; }
+
+/* ---------- Récapitulatif (dernière étape de l'achat) ---------- */
+.etp-recap { border: 1px solid #e6ebe8; border-radius: 14px; overflow: hidden; }
+.etp-recap-titre {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e6ebe8;
+  background: #f6f9f7;
+  color: var(--doux);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.etp-recap dl { margin: 0; }
+.etp-recap-ligne {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.15rem 0.8rem;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #edf0ee;
+}
+.etp-recap-ligne:last-child { border-bottom: none; }
+.etp-recap dt { grid-column: 1; color: var(--doux); font-size: 0.76rem; }
+.etp-recap dd {
+  grid-column: 1;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.etp-recap dd img { width: 20px; height: 20px; border-radius: 50%; flex: none; }
+.etp-modifier {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  min-height: 36px;
+  padding: 0.3rem 0.6rem;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.etp-modifier:hover { background: var(--accent-clair); }
+
+/* ---------- Boutons Retour / Continuer ---------- */
+.etp-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.75rem; }
+.etp-actions.avec-retour { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); }
+.etp-retour {
+  min-height: 54px;
+  border-color: var(--bord);
+  border-radius: 12px;
+  color: var(--doux);
+  font-size: 0.92rem;
+}
+.etp-retour:hover { border-color: var(--doux); color: var(--encre); }
+.etp-retour:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ---------- « Comment ça marche » / déroulé ---------- */
+.etp-deroule-boite {
+  padding: 1.1rem 1.2rem;
+  border: 1px solid #e6ebe8;
+  border-radius: 14px;
+  background: #fbfcfb;
+}
+.etp-deroule-titre {
+  margin: 0 0 1rem;
+  color: var(--doux);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.etp-deroule { list-style: none; margin: 0; padding: 0; counter-reset: etp; }
+.etp-deroule li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  column-gap: 0.8rem;
+  padding-bottom: 1.1rem;
+  counter-increment: etp;
+}
+.etp-deroule li:last-child { padding-bottom: 0; }
+.etp-deroule li::before {
+  content: counter(etp);
+  grid-row: 1 / span 2;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--bord);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--doux);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+.etp-deroule li:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  top: 30px;
+  bottom: 0;
+  width: 2px;
+  background: var(--bord);
+}
+.etp-deroule strong { align-self: center; font-size: 0.88rem; line-height: 1.4; }
+.etp-deroule span { color: var(--doux); font-size: 0.8rem; line-height: 1.6; }
+
+.etp-deroule li.fait::before {
+  content: '✓';
+  border-color: var(--accent);
+  background: var(--accent-clair);
+  color: var(--accent-fonce);
+}
+.etp-deroule li.fait::after { background: var(--accent); }
+.etp-deroule li.actuel::before {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 0 4px var(--accent-clair);
+}
+
+/* ---------- Vente : bannière du dépôt ---------- */
+.vt-banniere {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.3rem;
+  padding: 1.2rem;
+  border-radius: 16px;
+  color: #fff;
+  background: linear-gradient(120deg, #103d30 0%, #14785c 60%, #20a078 100%);
+  box-shadow: 0 10px 28px rgba(20, 120, 92, 0.16);
+}
+.vt-banniere-logo {
+  width: 54px;
+  height: 54px;
+  flex: none;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.25);
+}
+.vt-banniere-etiquette {
+  display: block;
+  margin-bottom: 0.15rem;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.78;
+}
+.vt-banniere strong { display: block; font-size: 1.2rem; line-height: 1.25; letter-spacing: -0.03em; }
+.vt-reseau {
+  display: inline-block;
+  margin-top: 0.45rem;
+  padding: 0.2rem 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.vente-page .vente-adresse-boite code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.vente-page .vente-adresse-zone > label { display: block; }
+
+.vt-bloc-suite { margin-top: 1.5rem; }
+
+@media (max-width: 640px) {
+  .etp { margin-top: 1.4rem; }
+  .etp-item { font-size: 0.7rem; }
+  .etp-actions.avec-retour { grid-template-columns: minmax(0, 1fr) minmax(0, 1.8fr); }
+  .vt-banniere { padding: 1rem; gap: 0.8rem; }
+  .vt-banniere-logo { width: 46px; height: 46px; }
+  .etp-deroule-boite { padding: 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .etp-panneau { animation: none; }
+  .etp-item::before,
+  .etp-pastille { transition: none; }
+}

@@ -4,9 +4,37 @@ import { useState } from 'react';
 import Link from 'next/link';
 import ChoixCrypto from '@/components/ChoixCrypto';
 import ChampTelephone from '@/components/ChampTelephone';
-import { telVide, nomReseau, memoPour } from '@/lib/config';
+import Etapes from '@/components/Etapes';
+import { CRYPTOS, telVide, nomReseau, memoPour } from '@/lib/config';
 import { ajouterCommande, lire } from '@/lib/storage';
 import { redirigerVersWhatsApp } from '@/lib/whatsapp';
+
+import '../etapes.css';
+
+// La vente se fait en 2 parties : créer la demande, puis déposer les cryptos.
+const ETAPES = ['Ma vente', 'Dépôt crypto'];
+
+// Bouton « Copier » réutilisé pour l'adresse et le MEMO.
+function BoutonCopier({ copie, onClick, label }) {
+  return (
+    <button
+      type="button"
+      className={`vente-copier ${copie ? 'copie' : ''}`}
+      onClick={onClick}
+      aria-label={label}
+    >
+      {copie ? (
+        <>
+          <span aria-hidden="true">✓</span> Copié
+        </>
+      ) : (
+        <>
+          <span aria-hidden="true">▢</span> Copier
+        </>
+      )}
+    </button>
+  );
+}
 
 export default function Vendre() {
   const [choix, setChoix] = useState({
@@ -158,9 +186,10 @@ export default function Vendre() {
     }
   }
 
-  // Étape 2 : instructions de dépôt.
+  // ───────── Partie 2 : dépôt des cryptomonnaies ─────────
   if (commande) {
     const reseau = nomReseau(commande.crypto, commande.reseau);
+    const infoCrypto = CRYPTOS.find((c) => c.code === commande.crypto);
 
     return (
       <section className="page vente-page">
@@ -180,31 +209,26 @@ export default function Vendre() {
             Votre demande est créée. Suivez les instructions ci-dessous
             pour effectuer votre dépôt.
           </p>
+
+          <Etapes etapes={ETAPES} courante={1} />
         </header>
 
         <div className="vente-confirmation">
-          <div className="vente-confirmation-entete">
-            <div className="vente-icone-confirmation">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M12 5v14" />
-                <path d="m19 12-7 7-7-7" />
-              </svg>
-            </div>
+          <div className="vt-banniere">
+            {infoCrypto?.logo && (
+              <img
+                src={infoCrypto.logo}
+                alt=""
+                width="54"
+                height="54"
+                className="vt-banniere-logo"
+              />
+            )}
 
             <div>
-              <span className="vente-etiquette">
-                ÉTAPE SUIVANTE
-              </span>
-              <h2>Adresse de dépôt</h2>
-              <p>Réseau sélectionné : {reseau}</p>
+              <span className="vt-banniere-etiquette">Dépôt à effectuer</span>
+              <strong>{infoCrypto?.nom || commande.crypto}</strong>
+              <span className="vt-reseau">Réseau {reseau}</span>
             </div>
           </div>
 
@@ -218,31 +242,16 @@ export default function Vendre() {
           </div>
 
           <div className="vente-adresse-zone">
-            <label htmlFor="adresse-depot">
-              Adresse de réception du dépôt
-            </label>
+            <label htmlFor="adresse-depot">Adresse de dépôt</label>
 
             <div className="vente-adresse-boite">
-              <code id="adresse-depot">
-                {commande.adresseDepot}
-              </code>
+              <code id="adresse-depot">{commande.adresseDepot}</code>
 
-              <button
-                type="button"
-                className={`vente-copier ${copie ? 'copie' : ''}`}
+              <BoutonCopier
+                copie={copie}
                 onClick={() => copier(commande.adresseDepot, setCopie)}
-                aria-label="Copier l'adresse de dépôt"
-              >
-                {copie ? (
-                  <>
-                    <span aria-hidden="true">✓</span> Copié
-                  </>
-                ) : (
-                  <>
-                    <span aria-hidden="true">▢</span> Copier
-                  </>
-                )}
-              </button>
+                label="Copier l'adresse de dépôt"
+              />
             </div>
 
             <p className="vente-aide-adresse">
@@ -252,7 +261,7 @@ export default function Vendre() {
 
           {commande.memoDepot && (
             <>
-              <div className="vente-avertissement">
+              <div className="vente-avertissement vt-bloc-suite">
                 <span aria-hidden="true">!</span>
                 <p>
                   <strong>MEMO obligatoire.</strong> Pour ce réseau, vous
@@ -268,41 +277,27 @@ export default function Vendre() {
                 <div className="vente-adresse-boite">
                   <code id="memo-depot">{commande.memoDepot}</code>
 
-                  <button
-                    type="button"
-                    className={`vente-copier ${copieMemo ? 'copie' : ''}`}
+                  <BoutonCopier
+                    copie={copieMemo}
                     onClick={() => copier(commande.memoDepot, setCopieMemo)}
-                    aria-label="Copier le MEMO"
-                  >
-                    {copieMemo ? (
-                      <>
-                        <span aria-hidden="true">✓</span> Copié
-                      </>
-                    ) : (
-                      <>
-                        <span aria-hidden="true">▢</span> Copier
-                      </>
-                    )}
-                  </button>
+                    label="Copier le MEMO"
+                  />
                 </div>
               </div>
             </>
+          )}
+
+          {erreur && (
+            <p role="alert" className="vente-erreur">
+              <span aria-hidden="true">!</span>
+              {erreur}
+            </p>
           )}
 
           <div className="vente-details">
             <div className="vente-detail-ligne">
               <span>Référence de l'opération</span>
               <strong>{commande.id}</strong>
-            </div>
-
-            <div className="vente-detail-ligne">
-              <span>Cryptomonnaie</span>
-              <strong>{commande.crypto}</strong>
-            </div>
-
-            <div className="vente-detail-ligne">
-              <span>Réseau</span>
-              <strong>{reseau}</strong>
             </div>
 
             <div className="vente-detail-ligne">
@@ -314,6 +309,24 @@ export default function Vendre() {
               <span>Numéro Mobile Money</span>
               <strong>{commande.numeroDepot}</strong>
             </div>
+          </div>
+
+          <div className="etp-deroule-boite vt-bloc-suite">
+            <h3 className="etp-deroule-titre">Où en êtes-vous ?</h3>
+            <ol className="etp-deroule">
+              <li className="fait">
+                <strong>Demande créée</strong>
+                <span>Votre adresse de dépôt est prête.</span>
+              </li>
+              <li className="actuel">
+                <strong>Envoi de vos {commande.crypto}</strong>
+                <span>À l'adresse ci-dessus, uniquement sur le réseau {reseau}.</span>
+              </li>
+              <li>
+                <strong>Réception de vos FCFA</strong>
+                <span>Sur votre Mobile Money, après vérification de vos fonds.</span>
+              </li>
+            </ol>
           </div>
 
           <div className="vente-info-paiement">
@@ -340,7 +353,7 @@ export default function Vendre() {
     );
   }
 
-  // Étape 1 : création de la demande.
+  // ───────── Partie 1 : création de la demande ─────────
   return (
     <section className="page vente-page">
       <Link href="/accueil" className="vente-retour">
@@ -360,19 +373,7 @@ export default function Vendre() {
           votre paiement Mobile Money.
         </p>
 
-        <div className="vente-etapes">
-          <div className="vente-etape active">
-            <span>1</span>
-            <strong>Configuration</strong>
-          </div>
-
-          <div className="vente-etape-ligne" />
-
-          <div className="vente-etape">
-            <span>2</span>
-            <strong>Dépôt crypto</strong>
-          </div>
-        </div>
+        <Etapes etapes={ETAPES} courante={0} />
       </header>
 
       <form onSubmit={valider} className="formulaire vente-formulaire">
@@ -381,6 +382,7 @@ export default function Vendre() {
             <span className="vente-numero">01</span>
 
             <div>
+              <p className="etp-compteur">Cryptomonnaie</p>
               <h2>Cryptomonnaie à vendre</h2>
               <p>Choisissez la monnaie et son réseau de transfert.</p>
             </div>
@@ -396,6 +398,7 @@ export default function Vendre() {
             <span className="vente-numero">02</span>
 
             <div>
+              <p className="etp-compteur">Paiement</p>
               <h2>Recevoir mes FCFA</h2>
               <p>
                 Renseignez le numéro Mobile Money sur lequel vous souhaitez
@@ -420,16 +423,25 @@ export default function Vendre() {
           </p>
         )}
 
+        <div className="etp-deroule-boite vt-bloc-suite">
+          <h3 className="etp-deroule-titre">Comment ça marche</h3>
+          <ol className="etp-deroule">
+            <li>
+              <strong>Vous créez la demande</strong>
+              <span>Votre adresse de dépôt vous est communiquée juste après.</span>
+            </li>
+            <li>
+              <strong>Vous envoyez vos cryptos</strong>
+              <span>Uniquement sur le réseau que vous avez choisi.</span>
+            </li>
+            <li>
+              <strong>Vous recevez vos FCFA</strong>
+              <span>Sur votre numéro Mobile Money, après vérification.</span>
+            </li>
+          </ol>
+        </div>
+
         <div className="vente-pied-formulaire">
-          <div className="vente-rappel">
-            <span aria-hidden="true">↗</span>
-
-            <p>
-              L'adresse de dépôt vous sera communiquée après la création
-              de votre demande.
-            </p>
-          </div>
-
           <button
             className="bouton plein vente-submit"
             type="submit"
