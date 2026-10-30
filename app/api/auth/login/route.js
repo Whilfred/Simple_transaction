@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { query } from '@/lib/db';
 import { creerSessionUser, USER_COOKIE } from '@/lib/auth';
 
