@@ -40,10 +40,12 @@ DROP TRIGGER IF EXISTS commandes_maj ON commandes;
 CREATE TRIGGER commandes_maj BEFORE UPDATE ON commandes
   FOR EACH ROW EXECUTE FUNCTION maj_updated_at();
 
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-
-
-
-
-
-
+CREATE TABLE IF NOT EXISTS users (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  email text UNIQUE NOT NULL,
+  password_hash text NOT NULL,
+  prenom text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);

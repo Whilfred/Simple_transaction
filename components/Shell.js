@@ -26,6 +26,18 @@ function IconeOperations({ active }) {
   );
 }
 
+// Nouvelle icône pour l'investissement
+function IconeInvestir({ active }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         strokeWidth={active ? 2.2 : 1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M3 21h18" />
+      <path d="M5 21V10l4-3 4 3v11" />
+      <path d="M13 21V14l4-3 4 3v7" />
+    </svg>
+  );
+}
+
 export default function Shell({ children }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -41,7 +53,10 @@ export default function Shell({ children }) {
 
   useEffect(() => {
     if (!pret || !consentement) return;
-    const libre = pathname === '/bienvenue' || pathname === '/confidentialite';
+    
+    // On libère les pages publiques ET tout l'espace investissement (qui a sa propre protection par compte)
+    const libre = pathname === '/bienvenue' || pathname === '/confidentialite' || pathname.startsWith('/investir');
+    
     if (!prenom && !libre) router.replace('/bienvenue');
     if (prenom && pathname === '/bienvenue') router.replace('/accueil');
   }, [pret, consentement, prenom, pathname, router]);
@@ -54,19 +69,22 @@ export default function Shell({ children }) {
   if (!pret) return null;
 
   const afficherPopup = !consentement && pathname !== '/confidentialite';
-
-  const pagesAvecNav = ['/accueil', '/dashboard', '/acheter', '/vendre'];
-  const afficherNav = prenom && pagesAvecNav.includes(pathname);
+  
+  // Le prénom n'est plus obligatoire pour afficher le menu si on est dans l'espace investissement
+  const estEspaceInvestissement = pathname.startsWith('/investir');
+  const afficherNav = (prenom || estEspaceInvestissement) && 
+                      ['/accueil', '/dashboard', '/acheter', '/vendre', '/investir'].includes(pathname);
 
   const estAccueil = pathname === '/accueil';
   const estDashboard = pathname === '/dashboard';
+  const estInvestir = pathname.startsWith('/investir');
 
   return (
     <>
       <header className="entete">
         <div className="conteneur entete-ligne">
           <Link href="/accueil" className="logo">{SITE.nom}</Link>
-          {prenom && <span className="salut">{prenom}</span>}
+          {prenom && !estEspaceInvestissement && <span className="salut">{prenom}</span>}
         </div>
       </header>
 
@@ -82,7 +100,11 @@ export default function Shell({ children }) {
           </Link>
           <Link href="/dashboard" className={`nav-bas-item ${estDashboard ? 'actif' : ''}`} aria-current={estDashboard ? 'page' : undefined}>
             <IconeOperations active={estDashboard} />
-            <span className="nav-bas-texte">Mes opérations</span>
+            <span className="nav-bas-texte">Opérations</span>
+          </Link>
+          <Link href="/investir" className={`nav-bas-item ${estInvestir ? 'actif' : ''}`} aria-current={estInvestir ? 'page' : undefined}>
+            <IconeInvestir active={estInvestir} />
+            <span className="nav-bas-texte">Investir</span>
           </Link>
         </nav>
       )}
