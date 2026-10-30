@@ -6,7 +6,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { lire, ecrire } from '@/lib/storage';
 import { SITE } from '@/lib/config';
 
-// --- Icônes SVG (trait fin, héritent de la couleur) ---
 function IconeAccueil({ active }) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"

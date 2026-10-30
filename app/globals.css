@@ -215,7 +215,6 @@ input:focus, select:focus { border-color: var(--accent); outline: none; box-shad
   * { transition: none !important; animation: none !important; }
 }
 
-```css
 /* =========================================
    EXCRYPT — ACCUEIL PREMIUM
    ========================================= */
@@ -1290,7 +1289,6 @@ input:focus, select:focus { border-color: var(--accent); outline: none; box-shad
 
 /* style */
 
-```css
 /* =========================================
    EXCRYPT — PAGE VENDRE PREMIUM
    ========================================= */
