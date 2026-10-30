@@ -49,3 +49,17 @@ CREATE TABLE IF NOT EXISTS users (
   prenom text NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now()
 );
+
+ALTER TABLE investissements_user DROP CONSTRAINT IF EXISTS investissements_user_user_id_categorie_actif_key;
+ALTER TABLE investissements_user ADD CONSTRAINT investissements_user_user_id_categorie_actif_key UNIQUE (user_id, categorie, actif);
+
+CREATE TABLE IF NOT EXISTS investissements_user (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  categorie text NOT NULL,
+  actif text NOT NULL,
+  quantite numeric NOT NULL DEFAULT 0,
+  prix_achat_moyen numeric NOT NULL DEFAULT 0,
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE(user_id, categorie, actif)
+);
