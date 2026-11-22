@@ -26,7 +26,7 @@ function IconeOperations({ active }) {
   );
 }
 
-// Nouvelle icône pour l'investissement
+// L'icône est conservée au cas où tu voudrais réactiver la fonction plus tard
 function IconeInvestir({ active }) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -54,7 +54,7 @@ export default function Shell({ children }) {
   useEffect(() => {
     if (!pret || !consentement) return;
     
-    // On libère les pages publiques ET tout l'espace investissement (qui a sa propre protection par compte)
+    // On libère les pages publiques ET tout l'espace investissement
     const libre = pathname === '/bienvenue' || pathname === '/confidentialite' || pathname.startsWith('/investir');
     
     if (!prenom && !libre) router.replace('/bienvenue');
@@ -77,7 +77,7 @@ export default function Shell({ children }) {
 
   const estAccueil = pathname === '/accueil';
   const estDashboard = pathname === '/dashboard';
-  const estInvestir = pathname.startsWith('/investir');
+  // const estInvestir = pathname.startsWith('/investir'); // Désactivé
 
   return (
     <>
@@ -98,14 +98,20 @@ export default function Shell({ children }) {
             <IconeAccueil active={estAccueil} />
             <span className="nav-bas-texte">Accueil</span>
           </Link>
+          
           <Link href="/dashboard" className={`nav-bas-item ${estDashboard ? 'actif' : ''}`} aria-current={estDashboard ? 'page' : undefined}>
             <IconeOperations active={estDashboard} />
             <span className="nav-bas-texte">Opérations</span>
           </Link>
+
+          {/* 🚫 ONGLET INVESTIR MASQUÉ */}
+          {/* 
           <Link href="/investir" className={`nav-bas-item ${estInvestir ? 'actif' : ''}`} aria-current={estInvestir ? 'page' : undefined}>
             <IconeInvestir active={estInvestir} />
             <span className="nav-bas-texte">Investir</span>
           </Link>
+          */}
+          
         </nav>
       )}
 
