@@ -3,6 +3,8 @@ import { randomBytes } from 'crypto';
 import { query } from '@/lib/db';
 import { CRYPTOS, ADRESSES_DEPOT, PAYS, operateursDe } from '@/lib/config';
 import { adresseValide } from '@/lib/adresses';
+import { cookies } from 'next/headers'; // 🔥 AJOUT
+import { lireSessionUser, USER_COOKIE } from '@/lib/auth'; // 🔥 AJOUT
 
 export const dynamic = 'force-dynamic';
 
@@ -104,6 +106,10 @@ export async function POST(request) {
   const { ligne, adresseDepot, erreur } = valider(corps);
   if (erreur) return NextResponse.json({ erreur }, { status: 400 });
 
+  // 🔥 RÉCUPÉRATION DE L'UTILISATEUR
+  const cookie = cookies().get(USER_COOKIE)?.value;
+  const userId = lireSessionUser(cookie);
+
   try {
     for (let i = 0; i < 3; i++) {
       const reference = nouvelleReference();
@@ -111,8 +117,8 @@ export async function POST(request) {
         await query(
           `INSERT INTO commandes
              (reference, type, crypto, reseau, montant_fcfa, adresse_reception, adresse_depot,
-              prenom, indicatif, numero, operateur)
-           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
+              prenom, indicatif, numero, operateur, user_id)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`, // 🔥 Ajout de $12
           [
             reference,
             ligne.type,
@@ -125,6 +131,7 @@ export async function POST(request) {
             ligne.indicatif,
             ligne.numero,
             ligne.operateur,
+            userId, // 🔥 On insère l'ID
           ]
         );
         return NextResponse.json(
@@ -132,7 +139,7 @@ export async function POST(request) {
           { status: 201 }
         );
       } catch (e) {
-        if (e.code !== '23505') throw e; // 23505 = référence déjà prise → on réessaie
+        if (e.code !== '23505') throw e; 
       }
     }
     throw new Error('Impossible de générer une référence unique');

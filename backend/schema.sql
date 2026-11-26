@@ -87,3 +87,5 @@ CREATE TABLE IF NOT EXISTS messages (
 
 -- Index pour accélérer la récupération des messages
 CREATE INDEX IF NOT EXISTS messages_conversation_idx ON messages (conversation_id, created_at ASC);
+
+ALTER TABLE commandes ADD COLUMN IF NOT EXISTS user_id uuid REFERENCES users(id);

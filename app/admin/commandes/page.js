@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link'; // 🔥 AJOUT : Import de Link
 
 const STATUTS = [
   { code: 'en_attente', label: 'En attente' },
@@ -87,9 +88,33 @@ export default function AdminCommandes() {
         }}
       >
         <h1 style={{ margin: 0 }}>Commandes</h1>
-        <button className="bouton" onClick={deconnexion}>
-          Déconnexion
-        </button>
+        
+        {/* 🔥 NOUVEAU : Conteneur pour les boutons de droite */}
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          
+          <Link 
+            href="/admin/messages" 
+            style={{ 
+              backgroundColor: '#007bff', 
+              color: 'white', 
+              padding: '10px 20px', 
+              borderRadius: '8px', 
+              textDecoration: 'none',
+              fontWeight: 'bold',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '14px'
+            }}
+          >
+            💬 Voir les messages
+          </Link>
+
+          <button className="bouton" onClick={deconnexion}>
+            Déconnexion
+          </button>
+          
+        </div>
       </div>
 
       <div style={{ marginBottom: 16 }}>

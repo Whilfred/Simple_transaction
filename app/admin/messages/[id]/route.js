@@ -6,9 +6,16 @@ export async function GET(request, { params }) {
     const conversationId = params.id;
 
     if (!conversationId) {
-      return NextResponse.json({ erreur: 'ID manquant' }, { status: 400 });
+      return NextResponse.json({ erreur: 'ID de conversation manquant' }, { status: 400 });
     }
 
+    // 🔥 NOUVEAU : On marque les messages de l'utilisateur comme "lus"
+    await query(
+      "UPDATE messages SET lu = true WHERE conversation_id = $1 AND expediteur = 'user' AND lu = false",
+      [conversationId]
+    );
+
+    // Récupérer les messages
     const messagesRes = await query(
       'SELECT id, expediteur, contenu, created_at FROM messages WHERE conversation_id = $1 ORDER BY created_at ASC',
       [conversationId]

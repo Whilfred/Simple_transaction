@@ -6,6 +6,7 @@ export async function GET() {
     const res = await query(`
       SELECT 
         c.id as conversation_id, 
+        c.user_id,
         c.commande_id, 
         cmd.reference, 
         cmd.type, 
