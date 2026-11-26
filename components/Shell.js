@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { SITE } from '@/lib/config';
 
 function IconeAccueil({ active }) {
@@ -35,27 +35,14 @@ function IconeMessages({ active }) {
 
 export default function Shell({ children }) {
   const pathname = usePathname();
-  const router = useRouter();
+  
+  // 🔥 On affiche la barre sur TOUTES les pages SAUF sur les pages de login/register
+  const masquerNav = pathname === '/login' || pathname === '/register';
+  const afficherNav = !masquerNav;
 
-  const afficherNav = ['/accueil', '/dashboard', '/messages'].includes(pathname);
   const estAccueil = pathname === '/accueil';
   const estDashboard = pathname === '/dashboard';
   const estMessages = pathname === '/messages';
-
-  // Fonction de déconnexion
-  async function handleLogout() {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      // On supprime aussi les données locales si besoin
-      localStorage.removeItem('derniere_commande_id');
-      localStorage.removeItem('prenom');
-      
-      router.push('/login');
-      router.refresh();
-    } catch (error) {
-      console.error('Erreur lors de la déconnexion', error);
-    }
-  }
 
   return (
     <>
@@ -63,10 +50,13 @@ export default function Shell({ children }) {
         <div className="conteneur entete-ligne" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Link href="/accueil" className="logo">{SITE.nom}</Link>
           
-          {/* Bouton de déconnexion (on l'affiche seulement si on n'est pas sur login/register) */}
-          {pathname !== '/login' && pathname !== '/register' && (
+          {/* Bouton déconnexion (uniquement si on est connecté et pas sur login) */}
+          {!masquerNav && (
             <button 
-              onClick={handleLogout}
+              onClick={async () => {
+                await fetch('/api/auth/logout', { method: 'POST' });
+                window.location.href = '/login';
+              }}
               style={{ background: 'none', border: 'none', color: '#d9534f', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold' }}
             >
               Déconnexion
