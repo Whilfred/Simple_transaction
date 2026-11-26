@@ -1,9 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { lire, ecrire } from '@/lib/storage';
 import { SITE } from '@/lib/config';
 
 function IconeAccueil({ active }) {
@@ -26,14 +24,11 @@ function IconeOperations({ active }) {
   );
 }
 
-// L'icône est conservée au cas où tu voudrais réactiver la fonction plus tard
-function IconeInvestir({ active }) {
+function IconeMessages({ active }) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
          strokeWidth={active ? 2.2 : 1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M3 21h18" />
-      <path d="M5 21V10l4-3 4 3v11" />
-      <path d="M13 21V14l4-3 4 3v7" />
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
     </svg>
   );
 }
@@ -41,96 +36,66 @@ function IconeInvestir({ active }) {
 export default function Shell({ children }) {
   const pathname = usePathname();
   const router = useRouter();
-  const [pret, setPret] = useState(false);
-  const [consentement, setConsentement] = useState(false);
-  const [prenom, setPrenom] = useState('');
 
-  useEffect(() => {
-    setConsentement(lire('consentement', false) === true);
-    setPrenom(lire('prenom', '') || '');
-    setPret(true);
-  }, [pathname]);
-
-  useEffect(() => {
-    if (!pret || !consentement) return;
-    
-    // On libère les pages publiques ET tout l'espace investissement
-    const libre = pathname === '/bienvenue' || pathname === '/confidentialite' || pathname.startsWith('/investir');
-    
-    if (!prenom && !libre) router.replace('/bienvenue');
-    if (prenom && pathname === '/bienvenue') router.replace('/accueil');
-  }, [pret, consentement, prenom, pathname, router]);
-
-  function accepter() {
-    ecrire('consentement', true);
-    setConsentement(true);
-  }
-
-  if (!pret) return null;
-
-  const afficherPopup = !consentement && pathname !== '/confidentialite';
-  
-  // Le prénom n'est plus obligatoire pour afficher le menu si on est dans l'espace investissement
-  const estEspaceInvestissement = pathname.startsWith('/investir');
-  const afficherNav = (prenom || estEspaceInvestissement) && 
-                      ['/accueil', '/dashboard', '/acheter', '/vendre', '/investir'].includes(pathname);
-
+  const afficherNav = ['/accueil', '/dashboard', '/messages'].includes(pathname);
   const estAccueil = pathname === '/accueil';
   const estDashboard = pathname === '/dashboard';
-  // const estInvestir = pathname.startsWith('/investir'); // Désactivé
+  const estMessages = pathname === '/messages';
+
+  // Fonction de déconnexion
+  async function handleLogout() {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      // On supprime aussi les données locales si besoin
+      localStorage.removeItem('derniere_commande_id');
+      localStorage.removeItem('prenom');
+      
+      router.push('/login');
+      router.refresh();
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion', error);
+    }
+  }
 
   return (
     <>
       <header className="entete">
-        <div className="conteneur entete-ligne">
+        <div className="conteneur entete-ligne" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Link href="/accueil" className="logo">{SITE.nom}</Link>
-          {prenom && !estEspaceInvestissement && <span className="salut">{prenom}</span>}
+          
+          {/* Bouton de déconnexion (on l'affiche seulement si on n'est pas sur login/register) */}
+          {pathname !== '/login' && pathname !== '/register' && (
+            <button 
+              onClick={handleLogout}
+              style={{ background: 'none', border: 'none', color: '#d9534f', cursor: 'pointer', fontSize: '14px', fontWeight: 'bold' }}
+            >
+              Déconnexion
+            </button>
+          )}
         </div>
       </header>
 
       <main className={`conteneur ${afficherNav ? 'avec-nav-bas' : ''}`}>
-        {consentement || pathname === '/confidentialite' ? children : null}
+        {children}
       </main>
 
       {afficherNav && (
         <nav className="nav-bas" aria-label="Navigation principale">
-          <Link href="/accueil" className={`nav-bas-item ${estAccueil ? 'actif' : ''}`} aria-current={estAccueil ? 'page' : undefined}>
+          <Link href="/accueil" className={`nav-bas-item ${estAccueil ? 'actif' : ''}`}>
             <IconeAccueil active={estAccueil} />
             <span className="nav-bas-texte">Accueil</span>
           </Link>
           
-          <Link href="/dashboard" className={`nav-bas-item ${estDashboard ? 'actif' : ''}`} aria-current={estDashboard ? 'page' : undefined}>
+          <Link href="/dashboard" className={`nav-bas-item ${estDashboard ? 'actif' : ''}`}>
             <IconeOperations active={estDashboard} />
             <span className="nav-bas-texte">Opérations</span>
           </Link>
 
-          {/* 🚫 ONGLET INVESTIR MASQUÉ */}
-          {/* 
-          <Link href="/investir" className={`nav-bas-item ${estInvestir ? 'actif' : ''}`} aria-current={estInvestir ? 'page' : undefined}>
-            <IconeInvestir active={estInvestir} />
-            <span className="nav-bas-texte">Investir</span>
+          <Link href="/messages" className={`nav-bas-item ${estMessages ? 'actif' : ''}`}>
+            <IconeMessages active={estMessages} />
+            <span className="nav-bas-texte">Messages</span>
           </Link>
-          */}
-          
         </nav>
-      )}
-
-      {afficherPopup && (
-        <div className="voile" role="dialog" aria-modal="true" aria-labelledby="titre-popup">
-          <div className="popup">
-            <h2 id="titre-popup">Confidentialité</h2>
-            <p>
-              Nous gardons uniquement les informations nécessaires pour traiter vos opérations : prénom,
-              numéro de téléphone, adresse de réception. Elles ne sont jamais revendues.
-            </p>
-            <p>
-              <Link href="/confidentialite">Lire la politique complète</Link>
-            </p>
-            <button className="bouton plein" onClick={accepter}>
-              J'accepte la politique de confidentialité
-            </button>
-          </div>
-        </div>
       )}
     </>
   );

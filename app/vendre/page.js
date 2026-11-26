@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import ChoixCrypto from '@/components/ChoixCrypto';
 import ChampTelephone from '@/components/ChampTelephone';
 import Etapes from '@/components/Etapes';
 import { CRYPTOS, telVide, nomReseau, memoPour } from '@/lib/config';
 import { ajouterCommande, lire } from '@/lib/storage';
-import { redirigerVersWhatsApp } from '@/lib/whatsapp';
 
 import '../etapes.css';
 
@@ -37,6 +37,7 @@ function BoutonCopier({ copie, onClick, label }) {
 }
 
 export default function Vendre() {
+  const router = useRouter();
   const [choix, setChoix] = useState({
     crypto: 'USDT',
     reseau: 'TRC20',
@@ -126,37 +127,14 @@ export default function Vendre() {
         reseau: choix.reseau,
       });
 
-      // 2. Préparer le message WhatsApp avec les données réelles.
-      const messageWhatsApp = [
-        'Bonjour ExCrypt ! Je viens de créer une demande de vente.',
-        '',
-        `Référence : ${nouvelleCommande.id}`,
-        `Cryptomonnaie : ${choix.crypto}`,
-        `Réseau : ${nomReseau(choix.crypto, choix.reseau)}`,
-        `Adresse de dépôt ExCrypt : ${nouvelleCommande.adresseDepot}`,
-        ...(nouvelleCommande.memoDepot
-          ? [`MEMO obligatoire : ${nouvelleCommande.memoDepot}`]
-          : []),
-        `Opérateur Mobile Money : ${depot.operateur}`,
-        `Numéro de réception : ${nouvelleCommande.numeroDepot}`,
-        '',
-        'Merci de confirmer les étapes à suivre pour recevoir mes FCFA.',
-      ].join('\n');
+      // 2. Enregistrer l'ID de la commande pour le chat
+      if (data.id) {
+        localStorage.setItem('derniere_commande_id', data.id);
+      }
 
       // 3. Afficher les instructions de dépôt.
-      // La commande est déjà enregistrée avant la redirection.
       setCommande(nouvelleCommande);
 
-      // 4. Ouvrir WhatsApp sans annuler la commande si la
-      // redirection échoue. Le message reste à envoyer par le client.
-      try {
-        redirigerVersWhatsApp(messageWhatsApp);
-      } catch (erreurWhatsApp) {
-        console.error(
-          'Impossible d’ouvrir WhatsApp :',
-          erreurWhatsApp
-        );
-      }
     } catch (erreurCreation) {
       console.error(
         'Erreur lors de la création de la demande de vente :',
@@ -343,6 +321,15 @@ export default function Vendre() {
               Suivre mon opération{' '}
               <span aria-hidden="true">→</span>
             </Link>
+
+            {/* Bouton pour aller au chat */}
+            <button 
+              onClick={() => router.push('/messages')} 
+              className="bouton" 
+              style={{ backgroundColor: '#007bff', color: 'white' }}
+            >
+              Discuter avec le support
+            </button>
 
             <Link href="/accueil" className="bouton">
               Retour à l'accueil

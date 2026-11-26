@@ -63,3 +63,27 @@ CREATE TABLE IF NOT EXISTS investissements_user (
   updated_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE(user_id, categorie, actif)
 );
+
+-- ==========================================
+-- MESSAGERIE (Chat lié aux commandes)
+-- ==========================================
+
+CREATE TABLE IF NOT EXISTS conversations (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  commande_id uuid REFERENCES commandes(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES users(id) ON DELETE CASCADE,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  conversation_id uuid REFERENCES conversations(id) ON DELETE CASCADE,
+  expediteur text NOT NULL CHECK (expediteur IN ('user', 'admin')),
+  contenu text NOT NULL,
+  lu boolean DEFAULT false,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- Index pour accélérer la récupération des messages
+CREATE INDEX IF NOT EXISTS messages_conversation_idx ON messages (conversation_id, created_at ASC);

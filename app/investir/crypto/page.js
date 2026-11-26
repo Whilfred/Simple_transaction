@@ -86,10 +86,8 @@ const CSS = `
 const TAUX_USD_FCFA = 600;
 const MONTANTS_RAPIDES = [10000, 50000, 100000, 500000];
 
-// Prix simulés (USD)
-const PRIX_SIMULES = { USDT: 1, BTC: 65000, ETH: 3500, SOL: 150, BNB: 600, XRP: 0.5, LTC: 80, DOGE: 0.15 };
-
-// Volatilité simulée par crypto (sert uniquement à dessiner la courbe)
+// Prix par défaut si l'API ne répond pas
+const PRIX_DEFAUT = { USDT: 1, BTC: 65000, ETH: 3500, SOL: 150, BNB: 600, XRP: 0.5, LTC: 80, DOGE: 0.15 };
 const VOLAT = { USDT: 0.0006, BTC: 0.02, ETH: 0.025, SOL: 0.035, BNB: 0.022, XRP: 0.03, LTC: 0.028, DOGE: 0.04 };
 
 const RISQUES = {
@@ -122,7 +120,6 @@ const fcfa = (n) => `${Math.round(n).toLocaleString('fr-FR')} FCFA`;
 const fmtVar = (v) => `${v >= 0 ? '+' : '−'}${Math.abs(v).toLocaleString('fr-FR', { maximumFractionDigits: 2 })} %`;
 const fmtQte = (q) => (q >= 1 ? q.toFixed(4) : q.toFixed(8));
 
-// Courbe simulée, toujours identique pour une même crypto et une même période
 function donnees(code, periode, prixFcfa, volat) {
   const { pts, f } = PERIODES[periode];
   let seed = 11;
@@ -205,24 +202,40 @@ export default function CryptoPage() {
   const [envoi, setEnvoi] = useState(false);
   const [toast, setToast] = useState(null);
 
+  // ÉTAT POUR LES PRIX RÉELS
+  const [prixApi, setPrixApi] = useState({});
+
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(null), 4500);
     return () => clearTimeout(t);
   }, [toast]);
 
-  const prixDe = (c) => (PRIX_SIMULES[c.code] || 1) * TAUX_USD_FCFA;
+  // CHARGEMENT DES PRIX EN DIRECT
+  useEffect(() => {
+    fetch('/api/investir/prix')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.cryptos) setPrixApi(data.cryptos);
+      })
+      .catch((e) => console.error("Erreur chargement prix", e));
+  }, []);
+
+  // On utilise le prix de l'API, sinon le prix par défaut
+  const prixDe = (c) => {
+    const prixUsd = prixApi[c.code]?.prix_usd || PRIX_DEFAUT[c.code] || 1;
+    return prixUsd * TAUX_USD_FCFA;
+  };
   const volatDe = (c) => VOLAT[c.code] || 0.03;
 
-  // Variation sur 1 semaine pour chaque carte
   const resumes = useMemo(
     () => Object.fromEntries(CRYPTOS.map((c) => [c.code, donnees(c.code, '1S', prixDe(c), volatDe(c))])),
-    []
+    [prixApi] // Recalculé quand les prix arrivent
   );
 
   const detail = useMemo(
     () => (choix ? donnees(choix.code, periode, prixDe(choix), volatDe(choix)) : null),
-    [choix, periode]
+    [choix, periode, prixApi]
   );
 
   function selectionner(c) {
@@ -267,7 +280,6 @@ export default function CryptoPage() {
     >
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
 
-      {/* ============ LISTE ============ */}
       {!choix && (
         <>
           <div className="iv-topbar">
@@ -326,7 +338,6 @@ export default function CryptoPage() {
         </>
       )}
 
-      {/* ============ DÉTAIL ============ */}
       {choix && detail && (
         <>
           <div className="iv-topbar">
@@ -365,7 +376,10 @@ export default function CryptoPage() {
           </div>
 
           <div className="iv-stats">
-            <div className="iv-stat"><div className="iv-l">Prix en dollars</div><div className="iv-v">{(PRIX_SIMULES[choix.code] || 1).toLocaleString('fr-FR')} USD</div></div>
+            <div className="iv-stat">
+              <div className="iv-l">Prix en dollars</div>
+              <div className="iv-v">{(prixApi[choix.code]?.prix_usd || PRIX_DEFAUT[choix.code] || 1).toLocaleString('fr-FR', { maximumFractionDigits: 2 })} USD</div>
+            </div>
             <div className="iv-stat"><div className="iv-l">Variation ({periode})</div><div className="iv-v">{fmtVar(detail.variation)}</div></div>
             <div className="iv-stat"><div className="iv-l">Niveau de risque</div><div className="iv-v">{risqueDe(choix.code).label}</div></div>
           </div>

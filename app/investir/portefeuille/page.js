@@ -57,18 +57,9 @@ const CSS = `
 /* ============================ DONNÉES ============================ */
 const TAUX_USD_FCFA = 600;
 
-// Prix simulés (USD) pour la bourse et la crypto
-const PRIX_USD = {
-  USDT: 1, BTC: 65000, ETH: 3500, SOL: 150, BNB: 600, XRP: 0.5, LTC: 80, DOGE: 0.15,
-  AAPL: 175, TSLA: 240, MSFT: 330, AMZN: 180,
-};
-
-// Prix des parts (FCFA) pour les entreprises locales
-const PRIX_PARTS_FCFA = {
-  'AgroTech Bobo': 5000,
-  SolarSahel: 10000,
-  OuagaTrans: 25000,
-};
+// Prix par défaut pour la Bourse (les cryptos viennent de l'API)
+const PRIX_BOURSE = { AAPL: 175, TSLA: 240, MSFT: 330, AMZN: 180 };
+const PRIX_PARTS_FCFA = { 'AgroTech Bobo': 5000, 'SolarSahel': 10000, 'OuagaTrans': 25000 };
 
 const CATEGORIES = {
   bourse: { label: 'Bourse', couleur: '#2563eb', icone: '📈', unite: 'action(s)' },
@@ -81,19 +72,24 @@ const fcfa = (n) => `${Math.round(n).toLocaleString('fr-FR')} FCFA`;
 const fmtQte = (q) =>
   Number.isInteger(q) ? q.toLocaleString('fr-FR') : q >= 1 ? q.toFixed(4) : q.toFixed(8);
 
-function prixActuelFcfa(categorie, actif) {
-  if (categorie === 'entreprise') return PRIX_PARTS_FCFA[actif] ?? 0;
-  return (PRIX_USD[actif] ?? 0) * TAUX_USD_FCFA;
-}
-
 /* ============================ PAGE ============================ */
 export default function PortefeuillePage() {
   const router = useRouter();
   const [investissements, setInvestissements] = useState([]);
   const [chargement, setChargement] = useState(true);
   const [erreur, setErreur] = useState('');
+  
+  // ÉTAT POUR LES PRIX RÉELS DES CRYPTOS
+  const [prixCrypto, setPrixCrypto] = useState({});
 
   useEffect(() => {
+    // 1. Charger les prix en direct
+    fetch('/api/investir/prix')
+      .then(r => r.json())
+      .then(data => { if (data.cryptos) setPrixCrypto(data.cryptos); })
+      .catch(console.error);
+
+    // 2. Charger le portefeuille
     fetch('/api/investir/portefeuille')
       .then(async (r) => {
         if (r.status === 401) {
@@ -110,6 +106,15 @@ export default function PortefeuillePage() {
       .catch((e) => setErreur(e.message))
       .finally(() => setChargement(false));
   }, [router]);
+
+  // Fonction pour récupérer le prix actuel d'un actif
+  const prixActuelFcfa = (categorie, actif) => {
+    if (categorie === 'entreprise') return PRIX_PARTS_FCFA[actif] ?? 0;
+    if (categorie === 'bourse') return (PRIX_BOURSE[actif] ?? 0) * TAUX_USD_FCFA;
+    // Pour la crypto, on utilise l'API (ou un prix de secours si pas encore chargé)
+    const prixUsd = prixCrypto[actif]?.prix_usd || 0;
+    return prixUsd * TAUX_USD_FCFA;
+  };
 
   // Regroupe les achats d'un même actif en une seule position
   const positions = useMemo(() => {
@@ -137,7 +142,7 @@ export default function PortefeuillePage() {
         return { ...p, valeur };
       })
       .sort((a, b) => b.valeur - a.valeur);
-  }, [investissements]);
+  }, [investissements, prixCrypto]); // Recalculé quand les prix arrivent
 
   const valeurTotale = positions.reduce((s, p) => s + p.valeur, 0);
   const tousConnus = positions.length > 0 && positions.every((p) => p.investiConnu);

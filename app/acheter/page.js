@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // 🔥 AJOUT
 import ChoixCrypto from '@/components/ChoixCrypto';
 import ChampTelephone from '@/components/ChampTelephone';
 import Etapes from '@/components/Etapes';
@@ -51,6 +52,7 @@ function raccourcir(adresse) {
 }
 
 export default function Acheter() {
+  const router = useRouter(); // 🔥 AJOUT
   const [etape, setEtape] = useState(0);
   const [choix, setChoix] = useState({
     crypto: 'USDT',
@@ -209,6 +211,11 @@ export default function Acheter() {
         montantFcfa: fcfa,
       });
 
+      // 🔥 AJOUT : On enregistre l'ID de la commande pour le chat
+      if (data.id) {
+        localStorage.setItem('derniere_commande_id', data.id);
+      }
+
       setEnvoye({
         id: data.reference,
         telephone: `${tel.indicatif} ${tel.numero.trim()}`,
@@ -278,6 +285,16 @@ export default function Acheter() {
             <Link href="/dashboard" className="bouton plein">
               Voir mes opérations
             </Link>
+            
+            {/* 🔥 AJOUT : Bouton pour aller au chat */}
+            <button 
+              onClick={() => router.push('/messages')} 
+              className="bouton" 
+              style={{ backgroundColor: '#007bff', color: 'white' }}
+            >
+              Discuter avec le support
+            </button>
+
             <Link href="/accueil" className="bouton">
               Retour à l'accueil
             </Link>

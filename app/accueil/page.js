@@ -2,14 +2,44 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { lire } from '@/lib/storage';
+import { useRouter } from 'next/navigation';
 
 export default function Accueil() {
+  const router = useRouter();
   const [prenom, setPrenom] = useState('');
+  const [verification, setVerification] = useState(true);
 
   useEffect(() => {
-    setPrenom(lire('prenom', '') || '');
-  }, []);
+    // On demande au serveur qui est connecté
+    fetch('/api/auth/me')
+      .then((res) => {
+        if (!res.ok) {
+          // Pas connecté : on renvoie vers le login
+          router.replace('/login');
+        } else {
+          return res.json();
+        }
+      })
+      .then((data) => {
+        if (data && data.user) {
+          setPrenom(data.user.prenom);
+        }
+        setVerification(false); // La vérification est terminée
+      })
+      .catch(() => {
+        // En cas d'erreur réseau, on redirige aussi
+        router.replace('/login');
+      });
+  }, [router]);
+
+  // Tant que la vérification est en cours, on affiche un écran de chargement
+  if (verification) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}>
+        <p>Vérification de votre session...</p>
+      </div>
+    );
+  }
 
   return (
     <section className="page accueil">
