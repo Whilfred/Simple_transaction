@@ -1,0 +1,23 @@
+import { NextResponse } from 'next/server';
+import { query } from '@/lib/db';
+
+export async function GET(request, { params }) {
+  try {
+    const conversationId = params.id;
+
+    if (!conversationId) {
+      return NextResponse.json({ erreur: 'ID de conversation manquant' }, { status: 400 });
+    }
+
+    // Récupérer les messages de cette conversation
+    const messagesRes = await query(
+      'SELECT id, expediteur, contenu, created_at FROM messages WHERE conversation_id = $1 ORDER BY created_at ASC',
+      [conversationId]
+    );
+
+    return NextResponse.json({ messages: messagesRes.rows });
+  } catch (error) {
+    console.error('Erreur API Admin GET messages (id):', error);
+    return NextResponse.json({ erreur: 'Erreur serveur' }, { status: 500 });
+  }
+}
