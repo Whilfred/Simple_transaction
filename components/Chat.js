@@ -14,7 +14,7 @@ export default function Chat() {
       const data = await res.json();
       if (data.messages) {
         setMessages(data.messages);
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
       }
     } catch (error) {
       console.error(error);
@@ -36,8 +36,9 @@ export default function Chat() {
     const contenu = nouveauMessage;
     setNouveauMessage('');
 
-    // Affichage immédiat
+    // Optimistic UI (Affichage immédiat)
     setMessages((prev) => [...prev, { id: Date.now(), expediteur: 'user', contenu, created_at: new Date().toISOString() }]);
+    setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
 
     try {
       await fetch('/api/messages', {
@@ -51,35 +52,104 @@ export default function Chat() {
     }
   };
 
-  if (chargement) return <p>Chargement...</p>;
+  // Fonction pour formater les dates (Aujourd'hui, Hier, etc.)
+  const formatDateSeparator = (dateStr) => {
+    const date = new Date(dateStr);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) return "Aujourd'hui";
+    if (date.toDateString() === yesterday.toDateString()) return "Hier";
+    
+    return date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  };
+
+  if (chargement) return <div style={{ textAlign: 'center', padding: '20px' }}>Chargement de la discussion...</div>;
+
+  // On regroupe les messages par jour pour afficher les séparateurs
+  let dernierJour = null;
 
   return (
-    <div style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '15px', display: 'flex', flexDirection: 'column', height: '400px', backgroundColor: '#f9f9f9' }}>
-      <div style={{ flex: 1, overflowY: 'auto', marginBottom: '15px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', backgroundColor: '#efeae2' }}>
+      
+      {/* En-tête du chat (optionnel, style WhatsApp) */}
+      <div style={{ padding: '15px 20px', backgroundColor: '#f0f2f5', borderBottom: '1px solid #ddd', display: 'flex', alignItems: 'center', gap: '15px' }}>
+        <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#25D366', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '18px', fontWeight: 'bold' }}>
+          S
+        </div>
+        <div>
+          <h3 style={{ margin: 0, fontSize: '16px', color: '#111' }}>Support ExCrypt</h3>
+          <p style={{ margin: 0, fontSize: '12px', color: '#667781' }}>En ligne</p>
+        </div>
+      </div>
+
+      {/* Zone des messages */}
+      <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {messages.length === 0 ? (
           <p style={{ textAlign: 'center', color: '#888', marginTop: '20px' }}>Aucun message. Écrivez-nous pour commencer !</p>
         ) : (
-          messages.map((msg) => (
-            <div key={msg.id} style={{ alignSelf: msg.expediteur === 'user' ? 'flex-end' : 'flex-start', maxWidth: '80%' }}>
-              <div style={{ backgroundColor: msg.expediteur === 'user' ? '#007bff' : '#e2e2e2', color: msg.expediteur === 'user' ? 'white' : 'black', padding: '8px 12px', borderRadius: '12px' }}>
-                {msg.contenu}
+          messages.map((msg) => {
+            const jourDuMessage = new Date(msg.created_at).toDateString();
+            const afficherSeparateur = jourDuMessage !== dernierJour;
+            dernierJour = jourDuMessage;
+
+            return (
+              <div key={msg.id} style={{ display: 'flex', flexDirection: 'column' }}>
+                
+                {/* Séparateur de date */}
+                {afficherSeparateur && (
+                  <div style={{ textAlign: 'center', margin: '15px 0' }}>
+                    <span style={{ backgroundColor: '#e1f3fb', color: '#54656f', fontSize: '12px', padding: '5px 12px', borderRadius: '8px', fontWeight: '500', textTransform: 'capitalize' }}>
+                      {formatDateSeparator(msg.created_at)}
+                    </span>
+                  </div>
+                )}
+
+                {/* Bulle de message */}
+                <div style={{ alignSelf: msg.expediteur === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
+                  <div style={{ 
+                    backgroundColor: msg.expediteur === 'user' ? '#d9fdd3' : '#ffffff', 
+                    color: '#111', 
+                    padding: '8px 12px', 
+                    borderRadius: '8px',
+                    borderTopRightRadius: msg.expediteur === 'user' ? '0' : '8px',
+                    borderTopLeftRadius: msg.expediteur === 'admin' ? '0' : '8px',
+                    boxShadow: '0 1px 1px rgba(0,0,0,0.1)',
+                    position: 'relative',
+                    fontSize: '15px',
+                    lineHeight: '1.4'
+                  }}>
+                    {msg.contenu}
+                    
+                    {/* Heure du message */}
+                    <div style={{ fontSize: '11px', color: '#667781', textAlign: 'right', marginTop: '4px', marginLeft: '10px' }}>
+                      {new Date(msg.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                  </div>
+                </div>
+
               </div>
-            </div>
-          ))
+            );
+          })
         )}
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={envoyerMessage} style={{ display: 'flex', gap: '10px' }}>
+      {/* Zone de saisie */}
+      <form onSubmit={envoyerMessage} style={{ padding: '10px 20px', backgroundColor: '#f0f2f5', borderTop: '1px solid #ddd', display: 'flex', gap: '10px', alignItems: 'center' }}>
         <input
           type="text"
           value={nouveauMessage}
           onChange={(e) => setNouveauMessage(e.target.value)}
-          placeholder="Écrivez votre message..."
-          style={{ flex: 1, padding: '10px', borderRadius: '20px', border: '1px solid #ccc' }}
+          placeholder="Tapez un message"
+          style={{ flex: 1, padding: '12px 20px', borderRadius: '25px', border: 'none', outline: 'none', fontSize: '15px', backgroundColor: 'white' }}
         />
-        <button type="submit" style={{ padding: '10px 20px', borderRadius: '20px', backgroundColor: '#007bff', color: 'white', border: 'none' }}>
-          Envoyer
+        <button type="submit" style={{ width: '45px', height: '45px', borderRadius: '50%', backgroundColor: '#00a884', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
         </button>
       </form>
     </div>

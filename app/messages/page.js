@@ -4,8 +4,7 @@ import Chat from '@/components/Chat';
 
 export default function PageMessages() {
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>Messagerie</h1>
+    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 60px)', backgroundColor: '#efeae2' }}>
       <Chat />
     </div>
   );
