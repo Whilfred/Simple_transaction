@@ -6,16 +6,11 @@ const css = {
   conteneur: {
     display: 'flex',
     flexDirection: 'column',
-    height: '100dvh', // 🔥 Prend toute la hauteur dynamique de l'écran (gère le clavier mobile)
+    height: 'calc(100dvh - 60px)', // Prend l'espace entre le header et la barre du bas
     width: '100%',
-    maxWidth: '800px', // Sur PC, on limite la largeur pour faire comme un téléphone
+    maxWidth: '800px', 
     margin: '0 auto',
     backgroundColor: '#efeae2',
-    position: 'fixed', // 🔥 FIXE la page pour empêcher tout scroll global
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
     overflow: 'hidden',
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
   },
@@ -47,11 +42,11 @@ const css = {
   zoneMessages: {
     flex: 1,
     padding: '16px',
-    overflowY: 'auto', // 🔥 Seul cet élément scrolle
+    overflowY: 'auto', 
     display: 'flex',
     flexDirection: 'column',
     gap: '8px',
-    WebkitOverflowScrolling: 'touch', // 🔥 Scroll fluide sur iOS
+    WebkitOverflowScrolling: 'touch', 
   },
   separateurDate: { textAlign: 'center', margin: '12px 0' },
   badgeDate: {
@@ -80,6 +75,8 @@ const css = {
     wordBreak: 'break-word',
   }),
   heure: { fontSize: '11px', color: '#667781', textAlign: 'right', marginTop: '4px', marginLeft: '10px' },
+  
+  // 🔥 SEULE MODIFICATION ICI : On s'assure que la zone de saisie est bien visible
   zoneSaisie: {
     padding: '10px 12px',
     backgroundColor: '#f0f2f5',
@@ -87,8 +84,8 @@ const css = {
     display: 'flex',
     gap: '10px',
     alignItems: 'center',
-    flexShrink: 0,
-    paddingBottom: 'calc(10px + env(safe-area-inset-bottom))', // 🔥 Gère l'encoche de l'iPhone en bas
+    flexShrink: 0, 
+    paddingBottom: '12px', 
   },
   input: {
     flex: 1,
@@ -96,7 +93,7 @@ const css = {
     borderRadius: '24px',
     border: 'none',
     outline: 'none',
-    fontSize: '16px', // 🔥 16px minimum pour empêcher le zoom automatique sur iOS
+    fontSize: '16px', 
     backgroundColor: 'white',
     minWidth: 0, 
   },
@@ -121,7 +118,6 @@ export default function Chat() {
   const [chargement, setChargement] = useState(true);
   const messagesEndRef = useRef(null);
 
-  // 🔥 BLOQUE TOTALEMENT LE SCROLL DU BODY (la page en arrière-plan)
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -150,7 +146,6 @@ export default function Chat() {
     return () => clearInterval(interval);
   }, []);
 
-  // 🔥 SCROLL TOUJOURS EN BAS QUAND LES MESSAGES CHANGENT
   useEffect(() => {
     if (!chargement) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -164,7 +159,6 @@ export default function Chat() {
     const contenu = nouveauMessage;
     setNouveauMessage('');
 
-    // Affichage immédiat
     setMessages((prev) => [...prev, { id: Date.now(), expediteur: 'user', contenu, created_at: new Date().toISOString() }]);
 
     try {
@@ -204,7 +198,6 @@ export default function Chat() {
   return (
     <div style={css.conteneur}>
       
-      {/* En-tête */}
       <div style={css.entete}>
         <div style={css.avatar}>S</div>
         <div>
@@ -213,7 +206,6 @@ export default function Chat() {
         </div>
       </div>
 
-      {/* Zone des messages */}
       <div style={css.zoneMessages}>
         {messages.length === 0 ? (
           <p style={{ textAlign: 'center', color: '#888', marginTop: '20px' }}>
@@ -227,7 +219,6 @@ export default function Chat() {
 
             return (
               <div key={msg.id} style={{ display: 'flex', flexDirection: 'column' }}>
-                
                 {afficherSeparateur && (
                   <div style={css.separateurDate}>
                     <span style={css.badgeDate}>
@@ -244,7 +235,6 @@ export default function Chat() {
                     </div>
                   </div>
                 </div>
-
               </div>
             );
           })
@@ -252,7 +242,6 @@ export default function Chat() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Saisie */}
       <form onSubmit={envoyerMessage} style={css.zoneSaisie}>
         <input
           type="text"
