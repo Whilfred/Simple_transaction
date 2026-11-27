@@ -10,14 +10,28 @@ const css = {
     '--ex-nuit': '#0c1220',
     '--ex-fond': '#f4f5f8',
     '--ex-texte': '#0f172a',
-    minHeight: '100vh',
+    
+    // 🔥 MODIFICATIONS ICI POUR BLOQUER LE SCROLL
+    height: '100%', 
+    maxHeight: '100vh',
+    overflow: 'hidden', 
+    
     backgroundColor: 'var(--ex-fond)',
     color: 'var(--ex-texte)',
     fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
     WebkitFontSmoothing: 'antialiased',
   },
-  conteneur: { position: 'relative', maxWidth: '520px', minHeight: '100vh', margin: '0 auto', backgroundColor: 'var(--ex-fond)' },
-  entete: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '28px 20px 96px', backgroundColor: 'var(--ex-nuit)', borderRadius: '0 0 32px 32px' },
+  conteneur: { 
+    position: 'relative', 
+    maxWidth: '520px', 
+    height: '100%',
+    overflow: 'hidden', // Bloque le scroll ici aussi
+    margin: '0 auto', 
+    backgroundColor: 'var(--ex-fond)',
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  entete: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '28px 20px 96px', backgroundColor: 'var(--ex-nuit)', borderRadius: '0 0 32px 32px', flexShrink: 0 },
   salut: { display: 'flex', alignItems: 'center', gap: '12px' },
   avatar: { display: 'grid', placeItems: 'center', width: '46px', height: '46px', border: '2px solid var(--ex-jaune)', borderRadius: '50%', color: 'var(--ex-jaune)' },
   avatarSvg: { width: '22px', height: '22px' },
@@ -25,7 +39,10 @@ const css = {
   nom: { display: 'block', marginTop: '2px', color: '#ffffff', fontSize: '1.05rem', fontWeight: '600' },
   iconeBtn: { display: 'grid', placeItems: 'center', width: '42px', height: '42px', border: '0', borderRadius: '50%', backgroundColor: 'transparent', color: 'var(--ex-jaune)', cursor: 'pointer' },
   iconeBtnSvg: { width: '24px', height: '24px' },
-  corps: { position: 'relative', marginTop: '-72px', padding: '0 16px 40px' },
+  
+  // On laisse le corps scroller si nécessaire, mais il ne dépassera pas l'écran
+  corps: { position: 'relative', marginTop: '-72px', padding: '0 16px 40px', flex: 1, overflowY: 'auto' },
+  
   hero: { position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', overflow: 'hidden', padding: '26px 22px', backgroundColor: 'var(--ex-jaune)', borderRadius: '24px', boxShadow: '0 14px 30px rgba(229, 159, 0, 0.28)' },
   heroTexte: { position: 'relative', zIndex: 1, maxWidth: '270px' },
   heroH1: { margin: '0 0 10px', color: 'var(--ex-nuit)', fontSize: '1.6rem', fontWeight: '800', letterSpacing: '-0.02em', lineHeight: '1.2' },
