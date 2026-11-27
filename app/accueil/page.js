@@ -11,9 +11,9 @@ const css = {
     '--ex-fond': '#f4f5f8',
     '--ex-texte': '#0f172a',
     
-    // 🔥 MODIFICATIONS ICI POUR BLOQUER LE SCROLL
-    height: '100%', 
-    maxHeight: '100vh',
+    // On force la hauteur exacte de l'écran
+    height: '100dvh', // dvh = dynamic viewport height (gère la barre d'adresse mobile)
+    maxHeight: '100dvh',
     overflow: 'hidden', 
     
     backgroundColor: 'var(--ex-fond)',
@@ -25,7 +25,8 @@ const css = {
     position: 'relative', 
     maxWidth: '520px', 
     height: '100%',
-    overflow: 'hidden', // Bloque le scroll ici aussi
+    maxHeight: '100%',
+    overflow: 'hidden',
     margin: '0 auto', 
     backgroundColor: 'var(--ex-fond)',
     display: 'flex',
@@ -40,13 +41,12 @@ const css = {
   iconeBtn: { display: 'grid', placeItems: 'center', width: '42px', height: '42px', border: '0', borderRadius: '50%', backgroundColor: 'transparent', color: 'var(--ex-jaune)', cursor: 'pointer' },
   iconeBtnSvg: { width: '24px', height: '24px' },
   
-  // On laisse le corps scroller si nécessaire, mais il ne dépassera pas l'écran
-  corps: { position: 'relative', marginTop: '-72px', padding: '0 16px 40px', flex: 1, overflowY: 'auto' },
+  // Le corps ne scrolle pas (overflow: hidden)
+  corps: { position: 'relative', marginTop: '-72px', padding: '0 16px 20px', flex: 1, overflow: 'hidden' },
   
   hero: { position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', overflow: 'hidden', padding: '26px 22px', backgroundColor: 'var(--ex-jaune)', borderRadius: '24px', boxShadow: '0 14px 30px rgba(229, 159, 0, 0.28)' },
   heroTexte: { position: 'relative', zIndex: 1, maxWidth: '270px' },
   
-  // 🔥 COULEUR DU TEXTE EN BLANC
   heroH1: { margin: '0 0 10px', color: '#ffffff', fontSize: '1.6rem', fontWeight: '800', letterSpacing: '-0.02em', lineHeight: '1.2' },
   heroP: { margin: '0 0 20px', color: '#ffffff', fontSize: '0.88rem', lineHeight: '1.5' },
   
@@ -62,17 +62,29 @@ const css = {
   bleu: { backgroundColor: '#3b82f6' },
   orange: { backgroundColor: '#19b851' },
   violet: { backgroundColor: '#5cf066' },
-  bandeau: { display: 'flex', alignItems: 'center', gap: '14px', marginTop: '18px', padding: '18px', backgroundColor: 'var(--ex-nuit)', borderRadius: '20px' },
-  bandeauIcone: { display: 'grid', placeItems: 'center', flexShrink: 0, width: '46px', height: '46px', backgroundColor: 'var(--ex-jaune)', borderRadius: '12px', color: 'var(--ex-nuit)' },
-  bandeauIconeSvg: { width: '24px', height: '24px' },
-  bandeauTexteStrong: { display: 'block', color: '#ffffff', fontSize: '0.98rem', fontWeight: '700' },
-  bandeauTexteSpan: { display: 'block', marginTop: '3px', color: 'var(--ex-jaune)', fontSize: '0.8rem', lineHeight: '1.45' },
 };
 
 export default function Accueil() {
   const router = useRouter();
   const [prenom, setPrenom] = useState(null);
   const [verification, setVerification] = useState(true);
+
+  // 🚫 BLOCAGE TOTAL DU SCROLL (Body + HTML)
+  useEffect(() => {
+    // On sauvegarde les styles existants
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+
+    // On force le blocage
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    // On remet comme avant si on quitte la page
+    return () => {
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
+    };
+  }, []);
 
   useEffect(() => {
     fetch('/api/auth/me')
@@ -110,7 +122,7 @@ export default function Accueil() {
 
   if (verification || prenom === null) {
     return (
-      <div style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f4f5f8' }}>
+      <div style={{ display: 'flex', height: '100dvh', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f4f5f8' }}>
         <p style={{ color: '#0c1220', fontWeight: 'bold' }}>Chargement de votre espace...</p>
       </div>
     );
@@ -197,19 +209,6 @@ export default function Accueil() {
               <span style={css.tuileLabel}>Support</span>
             </Link>
           </nav>
-
-          <div style={css.bandeau}>
-            <div style={css.bandeauIcone} aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={css.bandeauIconeSvg}>
-                <path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6l-8-3Z" />
-                <path d="m9 12 2 2 4-4" />
-              </svg>
-            </div>
-            <div>
-              <strong style={css.bandeauTexteStrong}>Un échange en toute simplicité</strong>
-              <span style={css.bandeauTexteSpan}>Suivez les instructions et vérifiez les informations avant de confirmer.</span>
-            </div>
-          </div>
         </div>
       </div>
     </main>
