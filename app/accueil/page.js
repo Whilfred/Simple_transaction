@@ -45,8 +45,11 @@ const css = {
   
   hero: { position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', overflow: 'hidden', padding: '26px 22px', backgroundColor: 'var(--ex-jaune)', borderRadius: '24px', boxShadow: '0 14px 30px rgba(229, 159, 0, 0.28)' },
   heroTexte: { position: 'relative', zIndex: 1, maxWidth: '270px' },
-  heroH1: { margin: '0 0 10px', color: 'var(--ex-nuit)', fontSize: '1.6rem', fontWeight: '800', letterSpacing: '-0.02em', lineHeight: '1.2' },
-  heroP: { margin: '0 0 20px', color: 'rgba(12, 18, 32, 0.82)', fontSize: '0.88rem', lineHeight: '1.5' },
+  
+  // 🔥 COULEUR DU TEXTE EN BLANC
+  heroH1: { margin: '0 0 10px', color: '#ffffff', fontSize: '1.6rem', fontWeight: '800', letterSpacing: '-0.02em', lineHeight: '1.2' },
+  heroP: { margin: '0 0 20px', color: '#ffffff', fontSize: '0.88rem', lineHeight: '1.5' },
+  
   heroBtn: { display: 'inline-block', padding: '11px 26px', backgroundColor: 'var(--ex-nuit)', borderRadius: '999px', color: '#ffffff', fontSize: '0.9rem', fontWeight: '600', textDecoration: 'none' },
   heroDeco: { position: 'absolute', right: '-34px', bottom: '-40px', width: '190px', height: '190px' },
   heroCercle: { display: 'grid', placeItems: 'center', width: '100%', height: '100%', backgroundColor: 'rgba(12, 18, 32, 0.1)', borderRadius: '50%', color: 'rgba(12, 18, 32, 0.28)', fontSize: '6.5rem', fontWeight: '800', boxShadow: 'inset 0 0 0 22px rgba(255, 255, 255, 0.12)' },
