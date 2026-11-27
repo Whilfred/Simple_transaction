@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // 🔥 AJOUT
 import ChoixCrypto from '@/components/ChoixCrypto';
 import ChampTelephone from '@/components/ChampTelephone';
 import Etapes from '@/components/Etapes';
@@ -46,13 +45,63 @@ const TEXTES = [
 // Champ à vérifier avant de quitter chaque étape (étape 1 : rien à vérifier).
 const CHAMP_PAR_ETAPE = [null, 'montant', 'adresse', 'telephone'];
 
+// Styles de l'écran de confirmation (actions finales)
+const st = {
+  actions: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px',
+    width: '100%',
+    marginTop: '8px',
+  },
+  boutonSupport: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '10px',
+    width: '100%',
+    padding: '15px 20px',
+    borderRadius: '14px',
+    border: 'none',
+    background: 'linear-gradient(135deg, #25D366 0%, #00a884 100%)',
+    color: '#ffffff',
+    fontSize: '15.5px',
+    fontWeight: 600,
+    textDecoration: 'none',
+    cursor: 'pointer',
+    boxShadow: '0 6px 16px rgba(0,168,132,0.30)',
+  },
+  boutonSecondaire: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    padding: '14px 20px',
+    borderRadius: '14px',
+    border: '1.5px solid #00a884',
+    backgroundColor: '#ffffff',
+    color: '#00a884',
+    fontSize: '15px',
+    fontWeight: 600,
+    textDecoration: 'none',
+  },
+  lienDiscret: {
+    display: 'block',
+    textAlign: 'center',
+    padding: '10px',
+    color: '#667781',
+    fontSize: '14px',
+    fontWeight: 500,
+    textDecoration: 'none',
+  },
+};
+
 function raccourcir(adresse) {
   const a = adresse.trim();
   return a.length > 20 ? `${a.slice(0, 10)}…${a.slice(-8)}` : a;
 }
 
 export default function Acheter() {
-  const router = useRouter(); // 🔥 AJOUT
   const [etape, setEtape] = useState(0);
   const [choix, setChoix] = useState({
     crypto: 'USDT',
@@ -183,6 +232,28 @@ export default function Acheter() {
         return;
       }
 
+      // On enregistre tout AVANT la redirection WhatsApp,
+      // pour ne rien perdre si la page est quittée.
+      ajouterCommande({
+        id: data.reference,
+        type: 'achat',
+        date: new Date().toISOString(),
+        statut: data.statut,
+        ...choix,
+        montantFcfa: fcfa,
+      });
+
+      // On garde l'ID de la commande pour le chat
+      if (data.id) {
+        localStorage.setItem('derniere_commande_id', data.id);
+      }
+
+      setEnvoye({
+        id: data.reference,
+        telephone: `${tel.indicatif} ${tel.numero.trim()}`,
+        operateur: tel.operateur,
+      });
+
       const messageWhatsApp = [
         'Bonjour ExCrypt ! Je viens de créer une demande d’achat.',
         '',
@@ -201,26 +272,6 @@ export default function Acheter() {
       ].join('\n');
 
       redirigerVersWhatsApp(messageWhatsApp);
-
-      ajouterCommande({
-        id: data.reference,
-        type: 'achat',
-        date: new Date().toISOString(),
-        statut: data.statut,
-        ...choix,
-        montantFcfa: fcfa,
-      });
-
-      // 🔥 AJOUT : On enregistre l'ID de la commande pour le chat
-      if (data.id) {
-        localStorage.setItem('derniere_commande_id', data.id);
-      }
-
-      setEnvoye({
-        id: data.reference,
-        telephone: `${tel.indicatif} ${tel.numero.trim()}`,
-        operateur: tel.operateur,
-      });
     } catch (erreurEnvoi) {
       setErr((x) => ({
         ...x,
@@ -281,21 +332,30 @@ export default function Acheter() {
             </p>
           </div>
 
-          <div className="confirmation-actions">
-            <Link href="/dashboard" className="bouton plein">
+          <div style={st.actions}>
+            {/* Action principale : discuter avec le support */}
+            <Link href="/messages" style={st.boutonSupport}>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              Discuter avec le support
+            </Link>
+
+            <Link href="/dashboard" style={st.boutonSecondaire}>
               Voir mes opérations
             </Link>
-            
-            {/* 🔥 AJOUT : Bouton pour aller au chat */}
-            <button 
-              onClick={() => router.push('/messages')} 
-              className="bouton" 
-              style={{ backgroundColor: '#007bff', color: 'white' }}
-            >
-              Discuter avec le support
-            </button>
 
-            <Link href="/accueil" className="bouton">
+            <Link href="/accueil" style={st.lienDiscret}>
               Retour à l'accueil
             </Link>
           </div>

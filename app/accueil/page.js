@@ -4,9 +4,54 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+const css = {
+  page: {
+    '--ex-jaune': '#16cb62',
+    '--ex-nuit': '#0c1220',
+    '--ex-fond': '#f4f5f8',
+    '--ex-texte': '#0f172a',
+    minHeight: '100vh',
+    backgroundColor: 'var(--ex-fond)',
+    color: 'var(--ex-texte)',
+    fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+    WebkitFontSmoothing: 'antialiased',
+  },
+  conteneur: { position: 'relative', maxWidth: '520px', minHeight: '100vh', margin: '0 auto', backgroundColor: 'var(--ex-fond)' },
+  entete: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '28px 20px 96px', backgroundColor: 'var(--ex-nuit)', borderRadius: '0 0 32px 32px' },
+  salut: { display: 'flex', alignItems: 'center', gap: '12px' },
+  avatar: { display: 'grid', placeItems: 'center', width: '46px', height: '46px', border: '2px solid var(--ex-jaune)', borderRadius: '50%', color: 'var(--ex-jaune)' },
+  avatarSvg: { width: '22px', height: '22px' },
+  bonjour: { display: 'block', color: 'var(--ex-jaune)', fontSize: '0.85rem', fontWeight: '600' },
+  nom: { display: 'block', marginTop: '2px', color: '#ffffff', fontSize: '1.05rem', fontWeight: '600' },
+  iconeBtn: { display: 'grid', placeItems: 'center', width: '42px', height: '42px', border: '0', borderRadius: '50%', backgroundColor: 'transparent', color: 'var(--ex-jaune)', cursor: 'pointer' },
+  iconeBtnSvg: { width: '24px', height: '24px' },
+  corps: { position: 'relative', marginTop: '-72px', padding: '0 16px 40px' },
+  hero: { position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', overflow: 'hidden', padding: '26px 22px', backgroundColor: 'var(--ex-jaune)', borderRadius: '24px', boxShadow: '0 14px 30px rgba(229, 159, 0, 0.28)' },
+  heroTexte: { position: 'relative', zIndex: 1, maxWidth: '270px' },
+  heroH1: { margin: '0 0 10px', color: 'var(--ex-nuit)', fontSize: '1.6rem', fontWeight: '800', letterSpacing: '-0.02em', lineHeight: '1.2' },
+  heroP: { margin: '0 0 20px', color: 'rgba(12, 18, 32, 0.82)', fontSize: '0.88rem', lineHeight: '1.5' },
+  heroBtn: { display: 'inline-block', padding: '11px 26px', backgroundColor: 'var(--ex-nuit)', borderRadius: '999px', color: '#ffffff', fontSize: '0.9rem', fontWeight: '600', textDecoration: 'none' },
+  heroDeco: { position: 'absolute', right: '-34px', bottom: '-40px', width: '190px', height: '190px' },
+  heroCercle: { display: 'grid', placeItems: 'center', width: '100%', height: '100%', backgroundColor: 'rgba(12, 18, 32, 0.1)', borderRadius: '50%', color: 'rgba(12, 18, 32, 0.28)', fontSize: '6.5rem', fontWeight: '800', boxShadow: 'inset 0 0 0 22px rgba(255, 255, 255, 0.12)' },
+  grille: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginTop: '22px', padding: '18px 12px', backgroundColor: '#ffffff', borderRadius: '22px', boxShadow: '0 2px 10px rgba(15, 23, 42, 0.05)' },
+  tuile: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'var(--ex-texte)', textDecoration: 'none' },
+  tuileIcone: { display: 'grid', placeItems: 'center', width: '54px', height: '54px', borderRadius: '16px', color: '#ffffff' },
+  tuileIconeSvg: { width: '24px', height: '24px' },
+  tuileLabel: { fontSize: '0.74rem', fontWeight: '600', textAlign: 'center' },
+  vert: { backgroundColor: '#22b573' },
+  bleu: { backgroundColor: '#3b82f6' },
+  orange: { backgroundColor: '#19b851' },
+  violet: { backgroundColor: '#5cf066' },
+  bandeau: { display: 'flex', alignItems: 'center', gap: '14px', marginTop: '18px', padding: '18px', backgroundColor: 'var(--ex-nuit)', borderRadius: '20px' },
+  bandeauIcone: { display: 'grid', placeItems: 'center', flexShrink: 0, width: '46px', height: '46px', backgroundColor: 'var(--ex-jaune)', borderRadius: '12px', color: 'var(--ex-nuit)' },
+  bandeauIconeSvg: { width: '24px', height: '24px' },
+  bandeauTexteStrong: { display: 'block', color: '#ffffff', fontSize: '0.98rem', fontWeight: '700' },
+  bandeauTexteSpan: { display: 'block', marginTop: '3px', color: 'var(--ex-jaune)', fontSize: '0.8rem', lineHeight: '1.45' },
+};
+
 export default function Accueil() {
   const router = useRouter();
-  const [prenom, setPrenom] = useState('');
+  const [prenom, setPrenom] = useState(null);
   const [verification, setVerification] = useState(true);
 
   useEffect(() => {
@@ -21,6 +66,8 @@ export default function Accueil() {
       .then((data) => {
         if (data && data.user) {
           setPrenom(data.user.prenom);
+        } else {
+          setPrenom('');
         }
         setVerification(false);
       })
@@ -38,544 +85,113 @@ export default function Accueil() {
           url: window.location.origin,
         });
       }
-    } catch (e) {
-      /* partage annulé */
-    }
+    } catch (e) {}
   };
 
+  if (verification || prenom === null) {
+    return (
+      <div style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center', backgroundColor: '#f4f5f8' }}>
+        <p style={{ color: '#0c1220', fontWeight: 'bold' }}>Chargement de votre espace...</p>
+      </div>
+    );
+  }
+
   return (
-    <>
-      <style>{styles}</style>
+    <main style={css.page}>
+      <div style={css.conteneur}>
+        <header style={css.entete}>
+          <div style={css.salut}>
+            <div style={css.avatar} aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={css.avatarSvg}>
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
+              </svg>
+            </div>
+            <div>
+              <span style={css.bonjour}>Bonjour</span>
+              <strong style={css.nom}>{prenom || 'Bienvenue'}</strong>
+            </div>
+          </div>
 
-      <main className="ex-page" aria-busy={verification}>
-        <div className="ex-conteneur">
-          {verification ? (
-            <>
-              <div className="ex-entete">
-                <div className="ex-skeleton ex-sk-entete" />
-              </div>
-              <div className="ex-corps">
-                <div className="ex-skeleton ex-sk-hero" />
-                <div className="ex-grille">
-                  <div className="ex-skeleton ex-sk-tuile" />
-                  <div className="ex-skeleton ex-sk-tuile" />
-                  <div className="ex-skeleton ex-sk-tuile" />
-                  <div className="ex-skeleton ex-sk-tuile" />
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              {/* En-tête sombre */}
-              <header className="ex-entete">
-                <div className="ex-salut">
-                  <div className="ex-avatar" aria-hidden="true">
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <circle cx="12" cy="8" r="4" />
-                      <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
-                    </svg>
-                  </div>
-                  <div>
-                    <span className="ex-bonjour">Bonjour</span>
-                    <strong className="ex-nom">{prenom || 'Bienvenue'}</strong>
-                  </div>
-                </div>
+          <button type="button" style={css.iconeBtn} onClick={partager} aria-label="Partager ExCrypt">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={css.iconeBtnSvg} aria-hidden="true">
+              <circle cx="18" cy="5" r="3" />
+              <circle cx="6" cy="12" r="3" />
+              <circle cx="18" cy="19" r="3" />
+              <path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4" />
+            </svg>
+          </button>
+        </header>
 
-                <button
-                  type="button"
-                  className="ex-icone-btn"
-                  onClick={partager}
-                  aria-label="Partager ExCrypt"
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <circle cx="18" cy="5" r="3" />
-                    <circle cx="6" cy="12" r="3" />
-                    <circle cx="18" cy="19" r="3" />
-                    <path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4" />
-                  </svg>
-                </button>
-              </header>
+        <div style={css.corps}>
+          <section style={css.hero}>
+            <div style={css.heroTexte}>
+              <h1 style={css.heroH1}>Bienvenue sur <br />ExCrypt !</h1>
+              <p style={css.heroP}>Votre crypto, votre argent, votre liberté. Achetez et vendez vos cryptomonnaies simplement.</p>
+              <Link href="/acheter" style={css.heroBtn}>Commencer</Link>
+            </div>
+            <div style={css.heroDeco} aria-hidden="true">
+              <div style={css.heroCercle}>₮</div>
+            </div>
+          </section>
 
-              <div className="ex-corps">
-                {/* Carte de bienvenue */}
-                <section className="ex-hero">
-                  <div className="ex-hero-texte">
-                    <h1>
-                      Bienvenue sur <br />
-                      ExCrypt !
-                    </h1>
-                    <p>
-                      Votre crypto, votre argent, votre liberté. Achetez et
-                      vendez vos cryptomonnaies simplement.
-                    </p>
-                    <Link href="/acheter" className="ex-hero-btn">
-                      Commencer
-                    </Link>
-                  </div>
+          <nav style={css.grille} aria-label="Opérations">
+            <Link href="/acheter" style={css.tuile}>
+              <span style={{ ...css.tuileIcone, ...css.vert }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={css.tuileIconeSvg} aria-hidden="true">
+                  <path d="M12 19V5" />
+                  <path d="m5 12 7-7 7 7" />
+                </svg>
+              </span>
+              <span style={css.tuileLabel}>Acheter</span>
+            </Link>
 
-                  <div className="ex-hero-deco" aria-hidden="true">
-                    <div className="ex-hero-cercle">₮</div>
-                  </div>
-                </section>
+            <Link href="/vendre" style={css.tuile}>
+              <span style={{ ...css.tuileIcone, ...css.bleu }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={css.tuileIconeSvg} aria-hidden="true">
+                  <path d="M12 5v14" />
+                  <path d="m19 12-7 7-7-7" />
+                </svg>
+              </span>
+              <span style={css.tuileLabel}>Vendre</span>
+            </Link>
 
-                {/* Raccourcis */}
-                <nav className="ex-grille" aria-label="Opérations">
-                  <Link href="/acheter" className="ex-tuile">
-                    <span className="ex-tuile-icone ex-vert">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M12 19V5" />
-                        <path d="m5 12 7-7 7 7" />
-                      </svg>
-                    </span>
-                    <span className="ex-tuile-label">Acheter</span>
-                  </Link>
+            <Link href="/dashboard" style={css.tuile}>
+              <span style={{ ...css.tuileIcone, ...css.orange }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={css.tuileIconeSvg} aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7v5l3 2" />
+                </svg>
+              </span>
+              <span style={css.tuileLabel}>Historique</span>
+            </Link>
 
-                  <Link href="/vendre" className="ex-tuile">
-                    <span className="ex-tuile-icone ex-bleu">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <path d="M12 5v14" />
-                        <path d="m19 12-7 7-7-7" />
-                      </svg>
-                    </span>
-                    <span className="ex-tuile-label">Vendre</span>
-                  </Link>
+            <Link href="/messages" style={css.tuile}>
+              <span style={{ ...css.tuileIcone, ...css.violet }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={css.tuileIconeSvg} aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6" />
+                  <path d="M12 17h.01" />
+                </svg>
+              </span>
+              <span style={css.tuileLabel}>Support</span>
+            </Link>
+          </nav>
 
-                  {/* 🔥 MODIFIÉ : Redirection vers /dashboard */}
-                  <Link href="/dashboard" className="ex-tuile">
-                    <span className="ex-tuile-icone ex-orange">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <circle cx="12" cy="12" r="9" />
-                        <path d="M12 7v5l3 2" />
-                      </svg>
-                    </span>
-                    <span className="ex-tuile-label">Historique</span>
-                  </Link>
-
-                  {/* 🔥 MODIFIÉ : Redirection vers /messages */}
-                  <Link href="/messages" className="ex-tuile">
-                    <span className="ex-tuile-icone ex-violet">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        aria-hidden="true"
-                      >
-                        <circle cx="12" cy="12" r="9" />
-                        <path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6" />
-                        <path d="M12 17h.01" />
-                      </svg>
-                    </span>
-                    <span className="ex-tuile-label">Support</span>
-                  </Link>
-                </nav>
-
-                {/* Bandeau sombre */}
-                <div className="ex-bandeau">
-                  <div className="ex-bandeau-icone" aria-hidden="true">
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6l-8-3Z" />
-                      <path d="m9 12 2 2 4-4" />
-                    </svg>
-                  </div>
-                  <div className="ex-bandeau-texte">
-                    <strong>Un échange en toute simplicité</strong>
-                    <span>
-                      Suivez les instructions et vérifiez les informations avant
-                      de confirmer.
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
+          <div style={css.bandeau}>
+            <div style={css.bandeauIcone} aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={css.bandeauIconeSvg}>
+                <path d="M12 3 4 6v6c0 4.5 3.2 8 8 9 4.8-1 8-4.5 8-9V6l-8-3Z" />
+                <path d="m9 12 2 2 4-4" />
+              </svg>
+            </div>
+            <div>
+              <strong style={css.bandeauTexteStrong}>Un échange en toute simplicité</strong>
+              <span style={css.bandeauTexteSpan}>Suivez les instructions et vérifiez les informations avant de confirmer.</span>
+            </div>
+          </div>
         </div>
-      </main>
-    </>
+      </div>
+    </main>
   );
 }
-
-const styles = `
-.ex-page {
-  --ex-jaune: #16cb62;
-  --ex-jaune-fonce: #16cb62;
-  --ex-nuit: #0c1220;
-  --ex-nuit-2: #18202f;
-  --ex-fond: #f4f5f8;
-  --ex-surface: #ffffff;
-  --ex-texte: #0f172a;
-  --ex-doux: #64748b;
-  --ex-bordure: #e5e7ee;
-
-  min-height: 100vh;
-  background: var(--ex-fond);
-  color: var(--ex-texte);
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  -webkit-font-smoothing: antialiased;
-}
-
-.ex-page *,
-.ex-page *::before,
-.ex-page *::after {
-  box-sizing: border-box;
-}
-
-.ex-conteneur {
-  position: relative;
-  max-width: 520px;
-  min-height: 100vh;
-  margin: 0 auto;
-  background: var(--ex-fond);
-}
-
-/* En-tête */
-.ex-entete {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 28px 20px 96px;
-  background: var(--ex-nuit);
-  border-radius: 0 0 32px 32px;
-}
-
-.ex-salut {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.ex-avatar {
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  border: 2px solid var(--ex-jaune);
-  border-radius: 50%;
-  color: var(--ex-jaune);
-}
-
-.ex-avatar svg {
-  width: 22px;
-  height: 22px;
-}
-
-.ex-bonjour {
-  display: block;
-  color: var(--ex-jaune);
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.ex-nom {
-  display: block;
-  margin-top: 2px;
-  color: #ffffff;
-  font-size: 1.05rem;
-  font-weight: 600;
-}
-
-.ex-icone-btn {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  border: 0;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--ex-jaune);
-  cursor: pointer;
-  transition: background 0.15s ease;
-}
-
-.ex-icone-btn:hover {
-  background: rgba(255, 180, 0, 0.14);
-}
-
-.ex-icone-btn:focus-visible {
-  outline: 2px solid var(--ex-jaune);
-  outline-offset: 2px;
-}
-
-.ex-icone-btn svg {
-  width: 24px;
-  height: 24px;
-}
-
-/* Corps */
-.ex-corps {
-  position: relative;
-  margin-top: -72px;
-  padding: 0 16px 40px;
-}
-
-/* Carte de bienvenue */
-.ex-hero {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  overflow: hidden;
-  padding: 26px 22px;
-  background: var(--ex-jaune);
-  border-radius: 24px;
-  box-shadow: 0 14px 30px rgba(229, 159, 0, 0.28);
-}
-
-.ex-hero-texte {
-  position: relative;
-  z-index: 1;
-  max-width: 270px;
-}
-
-.ex-hero h1 {
-  margin: 0 0 10px;
-  color: var(--ex-nuit);
-  font-size: 1.6rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-
-.ex-hero p {
-  margin: 0 0 20px;
-  color: rgba(12, 18, 32, 0.82);
-  font-size: 0.88rem;
-  line-height: 1.5;
-}
-
-.ex-hero-btn {
-  display: inline-block;
-  padding: 11px 26px;
-  background: var(--ex-nuit);
-  border-radius: 999px;
-  color: #ffffff;
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: transform 0.15s ease, background 0.15s ease;
-}
-
-.ex-hero-btn:hover {
-  background: var(--ex-nuit-2);
-  transform: translateY(-1px);
-}
-
-.ex-hero-btn:focus-visible {
-  outline: 3px solid var(--ex-nuit);
-  outline-offset: 3px;
-}
-
-.ex-hero-deco {
-  position: absolute;
-  right: -34px;
-  bottom: -40px;
-  width: 190px;
-  height: 190px;
-}
-
-.ex-hero-cercle {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  height: 100%;
-  background: rgba(12, 18, 32, 0.1);
-  border-radius: 50%;
-  color: rgba(12, 18, 32, 0.28);
-  font-size: 6.5rem;
-  font-weight: 800;
-  padding: 0 0 0 0;
-  box-shadow: inset 0 0 0 22px rgba(255, 255, 255, 0.12);
-}
-
-/* Raccourcis */
-.ex-grille {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-top: 22px;
-  padding: 18px 12px;
-  background: var(--ex-surface);
-  border-radius: 22px;
-  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05);
-}
-
-.ex-tuile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  color: var(--ex-texte);
-  text-decoration: none;
-  transition: transform 0.15s ease;
-}
-
-.ex-tuile:hover {
-  transform: translateY(-2px);
-}
-
-.ex-tuile:focus-visible {
-  outline: 2px solid var(--ex-nuit);
-  outline-offset: 4px;
-  border-radius: 12px;
-}
-
-.ex-tuile-icone {
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  border-radius: 16px;
-  color: #ffffff;
-}
-
-.ex-tuile-icone svg {
-  width: 24px;
-  height: 24px;
-}
-
-.ex-vert { background: #22b573; }
-.ex-bleu { background: #3b82f6; }
-.ex-orange { background: #19b851; }
-.ex-violet { background: #5cf066; }
-
-.ex-tuile-label {
-  font-size: 0.74rem;
-  font-weight: 600;
-  text-align: center;
-}
-
-/* Bandeau sombre */
-.ex-bandeau {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-top: 18px;
-  padding: 18px;
-  background: var(--ex-nuit);
-  border-radius: 20px;
-}
-
-.ex-bandeau-icone {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 46px;
-  height: 46px;
-  background: var(--ex-jaune);
-  border-radius: 12px;
-  color: var(--ex-nuit);
-}
-
-.ex-bandeau-icone svg {
-  width: 24px;
-  height: 24px;
-}
-
-.ex-bandeau-texte strong {
-  display: block;
-  color: #ffffff;
-  font-size: 0.98rem;
-  font-weight: 700;
-}
-
-.ex-bandeau-texte span {
-  display: block;
-  margin-top: 3px;
-  color: var(--ex-jaune);
-  font-size: 0.8rem;
-  line-height: 1.45;
-}
-
-/* Chargement */
-.ex-skeleton {
-  background: linear-gradient(90deg, #e3e7ee 25%, #f1f3f8 50%, #e3e7ee 75%);
-  background-size: 200% 100%;
-  animation: ex-shimmer 1.4s infinite linear;
-  border-radius: 20px;
-}
-
-.ex-sk-entete {
-  width: 180px;
-  height: 46px;
-  background: rgba(255, 255, 255, 0.12);
-  animation: none;
-}
-
-.ex-sk-hero {
-  height: 200px;
-}
-
-.ex-sk-tuile {
-  height: 80px;
-}
-
-.ex-page .ex-corps .ex-grille {
-  background: transparent;
-  box-shadow: none;
-  padding: 0;
-}
-
-@keyframes ex-shimmer {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .ex-tuile,
-  .ex-hero-btn,
-  .ex-icone-btn,
-  .ex-skeleton {
-    transition: none;
-    animation: none;
-  }
-}
-`;
