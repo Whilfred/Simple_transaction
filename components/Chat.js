@@ -2,28 +2,27 @@
 
 import { useState, useEffect, useRef } from 'react';
 
-// Styles en objet pour éviter les bugs de Next.js
-// Styles en objet pour éviter les bugs de Next.js
 const css = {
   conteneur: {
     display: 'flex',
     flexDirection: 'column',
-    height: 'calc(100dvh - 142px)', // header (~68px) + barre du bas (~74px)
+    height: '100dvh', // 🔥 Prend toute la hauteur dynamique de l'écran (gère le clavier mobile)
     width: '100%',
-    margin: 0,
-    backgroundColor: '#eef2f0',
-    backgroundImage:
-      'radial-gradient(rgba(0,168,132,0.07) 1px, transparent 1px)',
-    backgroundSize: '18px 18px',
-    position: 'relative',
+    maxWidth: '800px', // Sur PC, on limite la largeur pour faire comme un téléphone
+    margin: '0 auto',
+    backgroundColor: '#efeae2',
+    position: 'fixed', // 🔥 FIXE la page pour empêcher tout scroll global
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     overflow: 'hidden',
-    fontFamily:
-      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
   },
   entete: {
-    padding: '10px 18px',
-    backgroundColor: '#ffffff',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+    padding: '12px 16px',
+    backgroundColor: '#f0f2f5',
+    borderBottom: '1px solid #d1d7db',
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
@@ -31,102 +30,81 @@ const css = {
     zIndex: 10,
   },
   avatar: {
-    width: '42px',
-    height: '42px',
+    width: '40px',
+    height: '40px',
     borderRadius: '50%',
-    background: 'linear-gradient(135deg, #25D366 0%, #00a884 100%)',
+    backgroundColor: '#25D366',
     color: 'white',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     fontSize: '18px',
-    fontWeight: '600',
+    fontWeight: 'bold',
     flexShrink: 0,
   },
-  enteteTitre: {
-    margin: 0,
-    fontSize: '16px',
-    fontWeight: '600',
-    color: '#111b21',
-  },
-  enteteStatut: {
-    margin: '1px 0 0 0',
-    fontSize: '13px',
-    color: '#00a884',
-    fontWeight: '500',
-  },
+  enteteTitre: { margin: 0, fontSize: '16px', fontWeight: '600', color: '#111b21' },
+  enteteStatut: { margin: '2px 0 0 0', fontSize: '12px', color: '#667781' },
   zoneMessages: {
     flex: 1,
-    minHeight: 0, // indispensable pour que le scroll reste dans la zone
-    padding: '12px 14px',
-    overflowY: 'auto',
+    padding: '16px',
+    overflowY: 'auto', // 🔥 Seul cet élément scrolle
     display: 'flex',
     flexDirection: 'column',
-    gap: '3px',
+    gap: '8px',
+    WebkitOverflowScrolling: 'touch', // 🔥 Scroll fluide sur iOS
   },
-  separateurDate: {
-    textAlign: 'center',
-    margin: '10px 0 8px',
-  },
+  separateurDate: { textAlign: 'center', margin: '12px 0' },
   badgeDate: {
-    backgroundColor: 'rgba(84, 101, 111, 0.55)',
-    color: '#ffffff',
-    fontSize: '13px',
-    padding: '3px 12px',
-    borderRadius: '999px',
+    backgroundColor: '#e1f3fb',
+    color: '#54656f',
+    fontSize: '12px',
+    padding: '4px 12px',
+    borderRadius: '8px',
     fontWeight: '500',
     textTransform: 'capitalize',
-    backdropFilter: 'blur(4px)',
-    WebkitBackdropFilter: 'blur(4px)',
   },
   bulleWrapper: (isUser) => ({
     alignSelf: isUser ? 'flex-end' : 'flex-start',
-    maxWidth: '78%',
+    maxWidth: '85%',
   }),
   bulle: (isUser) => ({
     backgroundColor: isUser ? '#d9fdd3' : '#ffffff',
     color: '#111b21',
-    padding: '7px 12px 5px',
-    borderRadius: '18px',
-    borderBottomRightRadius: isUser ? '5px' : '18px', // petite "queue" façon Telegram
-    borderBottomLeftRadius: isUser ? '18px' : '5px',
-    boxShadow: '0 1px 1px rgba(0,0,0,0.10)',
-    fontSize: '15.5px',
-    lineHeight: '1.35',
+    padding: '8px 12px',
+    borderRadius: '8px',
+    borderTopRightRadius: isUser ? '0' : '8px',
+    borderTopLeftRadius: isUser ? '8px' : '0',
+    boxShadow: '0 1px 1px rgba(0,0,0,0.1)',
+    fontSize: '15px',
+    lineHeight: '1.4',
     wordBreak: 'break-word',
   }),
-  heure: {
-    fontSize: '11.5px',
-    color: '#667781',
-    textAlign: 'right',
-    marginTop: '1px',
-    marginLeft: '14px',
-  },
+  heure: { fontSize: '11px', color: '#667781', textAlign: 'right', marginTop: '4px', marginLeft: '10px' },
   zoneSaisie: {
-    padding: '8px 12px 10px',
-    backgroundColor: 'transparent', // l'input flotte sur le fond
+    padding: '10px 12px',
+    backgroundColor: '#f0f2f5',
+    borderTop: '1px solid #d1d7db',
     display: 'flex',
-    gap: '8px',
+    gap: '10px',
     alignItems: 'center',
-    flexShrink: 0, // la saisie ne se fait jamais écraser
+    flexShrink: 0,
+    paddingBottom: 'calc(10px + env(safe-area-inset-bottom))', // 🔥 Gère l'encoche de l'iPhone en bas
   },
   input: {
     flex: 1,
-    padding: '13px 18px',
-    borderRadius: '22px',
+    padding: '12px 16px',
+    borderRadius: '24px',
     border: 'none',
     outline: 'none',
-    fontSize: '15.5px',
-    color: '#111b21',
-    backgroundColor: '#ffffff',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
-    minWidth: 0,
+    fontSize: '16px', // 🔥 16px minimum pour empêcher le zoom automatique sur iOS
+    backgroundColor: 'white',
+    minWidth: 0, 
   },
   boutonEnvoyer: {
-    width: '48px',
-    height: '48px',
+    width: '44px',
+    height: '44px',
     borderRadius: '50%',
-    background: 'linear-gradient(135deg, #25D366 0%, #00a884 100%)',
+    backgroundColor: '#00a884',
     color: 'white',
     border: 'none',
     cursor: 'pointer',
@@ -134,8 +112,7 @@ const css = {
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
-    boxShadow: '0 2px 6px rgba(0,168,132,0.35)',
-  },
+  }
 };
 
 export default function Chat() {
@@ -144,13 +121,21 @@ export default function Chat() {
   const [chargement, setChargement] = useState(true);
   const messagesEndRef = useRef(null);
 
+  // 🔥 BLOQUE TOTALEMENT LE SCROLL DU BODY (la page en arrière-plan)
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
+
   const chargerMessages = async () => {
     try {
       const res = await fetch('/api/messages');
       const data = await res.json();
       if (data.messages) {
         setMessages(data.messages);
-        setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
       }
     } catch (error) {
       console.error(error);
@@ -161,9 +146,16 @@ export default function Chat() {
 
   useEffect(() => {
     chargerMessages();
-    const interval = setInterval(chargerMessages, 5000); // Rafraîchir toutes les 5s
+    const interval = setInterval(chargerMessages, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  // 🔥 SCROLL TOUJOURS EN BAS QUAND LES MESSAGES CHANGENT
+  useEffect(() => {
+    if (!chargement) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, chargement]);
 
   const envoyerMessage = async (e) => {
     e.preventDefault();
@@ -174,7 +166,6 @@ export default function Chat() {
 
     // Affichage immédiat
     setMessages((prev) => [...prev, { id: Date.now(), expediteur: 'user', contenu, created_at: new Date().toISOString() }]);
-    setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
 
     try {
       await fetch('/api/messages', {
@@ -202,7 +193,7 @@ export default function Chat() {
 
   if (chargement) {
     return (
-      <div style={{ display: 'flex', height: '100vh', justifyContent: 'center', alignItems: 'center' }}>
+      <div style={{ display: 'flex', height: '100dvh', justifyContent: 'center', alignItems: 'center' }}>
         <p style={{ color: '#888' }}>Chargement de la discussion...</p>
       </div>
     );
@@ -222,7 +213,7 @@ export default function Chat() {
         </div>
       </div>
 
-      {/* Messages */}
+      {/* Zone des messages */}
       <div style={css.zoneMessages}>
         {messages.length === 0 ? (
           <p style={{ textAlign: 'center', color: '#888', marginTop: '20px' }}>
@@ -237,7 +228,6 @@ export default function Chat() {
             return (
               <div key={msg.id} style={{ display: 'flex', flexDirection: 'column' }}>
                 
-                {/* Date */}
                 {afficherSeparateur && (
                   <div style={css.separateurDate}>
                     <span style={css.badgeDate}>
@@ -246,7 +236,6 @@ export default function Chat() {
                   </div>
                 )}
 
-                {/* Bulle */}
                 <div style={css.bulleWrapper(msg.expediteur === 'user')}>
                   <div style={css.bulle(msg.expediteur === 'user')}>
                     {msg.contenu}
@@ -269,7 +258,7 @@ export default function Chat() {
           type="text"
           value={nouveauMessage}
           onChange={(e) => setNouveauMessage(e.target.value)}
-          placeholder="Tapez un message..."
+          placeholder="Tapez un message"
           style={css.input}
         />
         <button type="submit" style={css.boutonEnvoyer}>
