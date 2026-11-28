@@ -6,7 +6,7 @@ const css = {
   conteneur: {
     display: 'flex',
     flexDirection: 'column',
-    height: 'calc(100dvh - 60px)', // Prend l'espace entre le header et la barre du bas
+    height: 'calc(100dvh - 60px)',
     width: '100%',
     maxWidth: '800px', 
     margin: '0 auto',

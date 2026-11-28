@@ -11,8 +11,7 @@ const css = {
     '--ex-fond': '#f4f5f8',
     '--ex-texte': '#0f172a',
     
-    // On force la hauteur exacte de l'écran
-    height: '100dvh', // dvh = dynamic viewport height (gère la barre d'adresse mobile)
+    height: '100dvh', 
     maxHeight: '100dvh',
     overflow: 'hidden', 
     
@@ -41,7 +40,6 @@ const css = {
   iconeBtn: { display: 'grid', placeItems: 'center', width: '42px', height: '42px', border: '0', borderRadius: '50%', backgroundColor: 'transparent', color: 'var(--ex-jaune)', cursor: 'pointer' },
   iconeBtnSvg: { width: '24px', height: '24px' },
   
-  // Le corps ne scrolle pas (overflow: hidden)
   corps: { position: 'relative', marginTop: '-72px', padding: '0 16px 20px', flex: 1, overflow: 'hidden' },
   
   hero: { position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', overflow: 'hidden', padding: '26px 22px', backgroundColor: 'var(--ex-jaune)', borderRadius: '24px', boxShadow: '0 14px 30px rgba(229, 159, 0, 0.28)' },
@@ -53,15 +51,42 @@ const css = {
   heroBtn: { display: 'inline-block', padding: '11px 26px', backgroundColor: 'var(--ex-nuit)', borderRadius: '999px', color: '#ffffff', fontSize: '0.9rem', fontWeight: '600', textDecoration: 'none' },
   heroDeco: { position: 'absolute', right: '-34px', bottom: '-40px', width: '190px', height: '190px' },
   heroCercle: { display: 'grid', placeItems: 'center', width: '100%', height: '100%', backgroundColor: 'rgba(12, 18, 32, 0.1)', borderRadius: '50%', color: 'rgba(12, 18, 32, 0.28)', fontSize: '6.5rem', fontWeight: '800', boxShadow: 'inset 0 0 0 22px rgba(255, 255, 255, 0.12)' },
-  grille: { display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginTop: '22px', padding: '18px 12px', backgroundColor: '#ffffff', borderRadius: '22px', boxShadow: '0 2px 10px rgba(15, 23, 42, 0.05)' },
+  
+  // 🔥 On garde 4 colonnes, et on gère le 5ème élément (À propos) avec gridColumn
+  grille: { 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(4, 1fr)', 
+    gap: '10px', 
+    marginTop: '22px', 
+    padding: '18px 10px', 
+    backgroundColor: '#ffffff', 
+    borderRadius: '22px', 
+    boxShadow: '0 2px 10px rgba(15, 23, 42, 0.05)' 
+  },
   tuile: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'var(--ex-texte)', textDecoration: 'none' },
-  tuileIcone: { display: 'grid', placeItems: 'center', width: '54px', height: '54px', borderRadius: '16px', color: '#ffffff' },
+  tuileIcone: { display: 'grid', placeItems: 'center', width: '52px', height: '52px', borderRadius: '16px', color: '#ffffff' },
   tuileIconeSvg: { width: '24px', height: '24px' },
-  tuileLabel: { fontSize: '0.74rem', fontWeight: '600', textAlign: 'center' },
+  tuileLabel: { fontSize: '0.72rem', fontWeight: '600', textAlign: 'center' },
+  
+  // 🔥 Le bouton "À propos" prendra toute la place au centre en dessous
+  tuilePleineLargeur: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '8px',
+    color: 'var(--ex-texte)',
+    textDecoration: 'none',
+    gridColumn: '1 / -1', // Prend toute la largeur de la grille (les 4 colonnes)
+    marginTop: '10px',
+    borderTop: '1px solid #eee',
+    paddingTop: '15px'
+  },
+
   vert: { backgroundColor: '#22b573' },
   bleu: { backgroundColor: '#3b82f6' },
   orange: { backgroundColor: '#19b851' },
   violet: { backgroundColor: '#5cf066' },
+  teal: { backgroundColor: '#0ea5e9' }, 
 };
 
 export default function Accueil() {
@@ -69,17 +94,13 @@ export default function Accueil() {
   const [prenom, setPrenom] = useState(null);
   const [verification, setVerification] = useState(true);
 
-  // 🚫 BLOCAGE TOTAL DU SCROLL (Body + HTML)
   useEffect(() => {
-    // On sauvegarde les styles existants
     const originalBodyOverflow = document.body.style.overflow;
     const originalHtmlOverflow = document.documentElement.style.overflow;
 
-    // On force le blocage
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
 
-    // On remet comme avant si on quitte la page
     return () => {
       document.body.style.overflow = originalBodyOverflow;
       document.documentElement.style.overflow = originalHtmlOverflow;
@@ -208,7 +229,20 @@ export default function Accueil() {
               </span>
               <span style={css.tuileLabel}>Support</span>
             </Link>
+
+            {/* 🔥 BOUTON À PROPOS : Repart à la ligne en prenant toute la largeur */}
+            <Link href="/a-propos" style={css.tuilePleineLargeur}>
+              <span style={{ ...css.tuileIcone, ...css.teal }}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={css.tuileIconeSvg} aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 16v-4" />
+                  <path d="M12 8h.01" />
+                </svg>
+              </span>
+              <span style={css.tuileLabel}>À propos</span>
+            </Link>
           </nav>
+          
         </div>
       </div>
     </main>
