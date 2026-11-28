@@ -52,7 +52,7 @@ const css = {
   heroDeco: { position: 'absolute', right: '-34px', bottom: '-40px', width: '190px', height: '190px' },
   heroCercle: { display: 'grid', placeItems: 'center', width: '100%', height: '100%', backgroundColor: 'rgba(12, 18, 32, 0.1)', borderRadius: '50%', color: 'rgba(12, 18, 32, 0.28)', fontSize: '6.5rem', fontWeight: '800', boxShadow: 'inset 0 0 0 22px rgba(255, 255, 255, 0.12)' },
   
-  // 🔥 On garde 4 colonnes, et on gère le 5ème élément (À propos) avec gridColumn
+  // Grille à 4 colonnes
   grille: { 
     display: 'grid', 
     gridTemplateColumns: 'repeat(4, 1fr)', 
@@ -63,25 +63,13 @@ const css = {
     borderRadius: '22px', 
     boxShadow: '0 2px 10px rgba(15, 23, 42, 0.05)' 
   },
+  
+  // Le style des tuiles normales
   tuile: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'var(--ex-texte)', textDecoration: 'none' },
   tuileIcone: { display: 'grid', placeItems: 'center', width: '52px', height: '52px', borderRadius: '16px', color: '#ffffff' },
   tuileIconeSvg: { width: '24px', height: '24px' },
   tuileLabel: { fontSize: '0.72rem', fontWeight: '600', textAlign: 'center' },
   
-  // 🔥 Le bouton "À propos" prendra toute la place au centre en dessous
-  tuilePleineLargeur: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '8px',
-    color: 'var(--ex-texte)',
-    textDecoration: 'none',
-    gridColumn: '1 / -1', // Prend toute la largeur de la grille (les 4 colonnes)
-    marginTop: '10px',
-    borderTop: '1px solid #eee',
-    paddingTop: '15px'
-  },
-
   vert: { backgroundColor: '#22b573' },
   bleu: { backgroundColor: '#3b82f6' },
   orange: { backgroundColor: '#19b851' },
@@ -230,8 +218,8 @@ export default function Accueil() {
               <span style={css.tuileLabel}>Support</span>
             </Link>
 
-            {/* 🔥 BOUTON À PROPOS : Repart à la ligne en prenant toute la largeur */}
-            <Link href="/a-propos" style={css.tuilePleineLargeur}>
+            {/* 🔥 BOUTON À PROPOS : Il reste une tuile normale et se place à gauche */}
+            <Link href="/a-propos" style={css.tuile}>
               <span style={{ ...css.tuileIcone, ...css.teal }}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={css.tuileIconeSvg} aria-hidden="true">
                   <circle cx="12" cy="12" r="9" />
